@@ -87,6 +87,18 @@ while building phase 1 and anything the next session should know.
   uploads the photo and the server embeds it with the same model.
 - OCR engine: RapidOCR (onnxruntime) — pip-only, no system Tesseract needed.
 
+## Phase 4 — AI grading assistant (built 2026-07-13, user request)
+
+- **Heuristic OpenCV pipeline, not a trained model**: card contour detection →
+  perspective warp → sub-scores for centering (border-width symmetry),
+  corners/edges (whitening), surface (glare/blur, lowest confidence). Overall
+  is a weighted average capped near the worst criterion (conservative).
+- `POST /grade` — every response carries `experimental: true` and the
+  mandatory "estimate only, not an official grade" disclaimer (AGENTS.md §2);
+  the app renders an EXPERIMENTAL badge and the disclaimer prominently.
+- Upgrading to a trained model would need a labeled dataset of graded cards —
+  future work; keep the disclaimer regardless.
+
 ## Explicitly deferred (later phases)
 
 On-device TFLite embedding extraction (phase 2 follow-up), scheduled/Celery

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../features/cards/presentation/card_detail_screen.dart';
 import '../features/cards/presentation/cards_screen.dart';
 import '../features/collection/presentation/collection_screen.dart';
+import '../features/grading/presentation/grading_screen.dart';
 import '../features/scanner/presentation/scan_screen.dart';
 
 // Auth is temporarily out of the app flow (user decision, 2026-07-13): the app
@@ -21,6 +22,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(path: '/collection', builder: (_, _) => const CollectionScreen()),
       GoRoute(path: '/scan', builder: (_, _) => const ScanScreen()),
+      GoRoute(path: '/grade', builder: (_, _) => const GradingScreen()),
     ],
   );
 });
