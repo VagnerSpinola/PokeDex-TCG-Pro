@@ -34,8 +34,10 @@ class PokemonTcgClient:
                     raise
                 await asyncio.sleep(5 * attempt)
                 continue
-            if resp.status_code in (429, 502, 503, 504) and attempt < MAX_RETRIES:
-                await asyncio.sleep(5 * attempt)  # rate limit / transient server error
+            # 404 included: the API sporadically returns spurious 404s for
+            # valid queries under load; genuine 404s just exhaust the retries.
+            if resp.status_code in (404, 429, 502, 503, 504) and attempt < MAX_RETRIES:
+                await asyncio.sleep(5 * attempt)
                 continue
             resp.raise_for_status()
             return resp.json()

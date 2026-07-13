@@ -19,6 +19,7 @@ import asyncio
 import sys
 from typing import Any
 
+import httpx
 from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine
@@ -81,11 +82,18 @@ async def main() -> None:
             async with engine.connect() as conn:
                 set_ids = list((await conn.execute(select(Set.__table__.c.id))).scalars())
         total = 0
+        skipped: list[str] = []
         for i, set_id in enumerate(set_ids, 1):
-            n = await sync_set_prices(engine, client, set_id)
+            try:
+                n = await sync_set_prices(engine, client, set_id)
+            except httpx.HTTPError as exc:
+                # One flaky set must not kill the whole daily run.
+                skipped.append(set_id)
+                print(f"[{i}/{len(set_ids)}] set {set_id}: SKIPPED ({exc})", flush=True)
+                continue
             total += n
             print(f"[{i}/{len(set_ids)}] set {set_id}: {n} price rows", flush=True)
-        print(f"synced {total} price rows")
+        print(f"synced {total} price rows" + (f"; skipped sets: {skipped}" if skipped else ""))
     finally:
         await client.close()
         await engine.dispose()
