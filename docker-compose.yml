@@ -7,7 +7,8 @@ services:
       POSTGRES_PASSWORD: pokedex
       POSTGRES_DB: pokedex_tcg
     ports:
-      - "5432:5432"
+      # Host 15432 because native Postgres services occupy 5432 and 5433 on this machine.
+      - "15432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
