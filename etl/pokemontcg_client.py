@@ -13,7 +13,7 @@ import httpx
 
 BASE_URL = "https://api.pokemontcg.io/v2"
 PAGE_SIZE = 250
-MAX_RETRIES = 3
+MAX_RETRIES = 5
 
 
 class PokemonTcgClient:
@@ -26,9 +26,16 @@ class PokemonTcgClient:
 
     async def _get(self, path: str, params: dict[str, Any]) -> dict[str, Any]:
         for attempt in range(1, MAX_RETRIES + 1):
-            resp = await self._http.get(path, params=params)
-            if resp.status_code == 429 and attempt < MAX_RETRIES:
-                await asyncio.sleep(5 * attempt)  # basic backoff on rate limit
+            try:
+                resp = await self._http.get(path, params=params)
+            except (httpx.TimeoutException, httpx.TransportError):
+                # The API is flaky under load; back off and retry.
+                if attempt == MAX_RETRIES:
+                    raise
+                await asyncio.sleep(5 * attempt)
+                continue
+            if resp.status_code in (429, 502, 503, 504) and attempt < MAX_RETRIES:
+                await asyncio.sleep(5 * attempt)  # rate limit / transient server error
                 continue
             resp.raise_for_status()
             return resp.json()
