@@ -37,3 +37,6 @@ Thumbs.db
 
 # Docker volumes / data
 pgdata/
+
+# Scanner model/index artifacts (derived data, rebuilt by etl)
+backend/data/

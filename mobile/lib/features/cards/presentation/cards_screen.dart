@@ -77,6 +77,11 @@ class _CardsScreenState extends ConsumerState<CardsScreen> {
             tooltip: 'Filtros',
           ),
           IconButton(
+            icon: const Icon(Icons.photo_camera),
+            onPressed: () => context.push('/scan'),
+            tooltip: 'Escanear carta',
+          ),
+          IconButton(
             icon: const Icon(Icons.collections_bookmark),
             onPressed: () => context.go('/collection'),
             tooltip: 'Minha coleção',

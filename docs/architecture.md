@@ -59,7 +59,36 @@ while building phase 1 and anything the next session should know.
   Postgres is published on **15432**. All defaults point there.
 - Start Docker Desktop before running tests or the backend.
 
+## Phase 3 — prices (built 2026-07-13, user request)
+
+- `prices` table: unique on **(card_id, source, variant, date)** — `variant`
+  added to the AGENTS.md key because TCGplayer prices several printings of the
+  same card on the same day (normal, holofoil, ...). Cardmarket → 'default'.
+- `python -m etl.sync_prices` is the daily job for now (manual/scheduler);
+  Celery orchestration stays deferred to the infra phase.
+- Latest snapshot per source/variant is embedded in `GET /cards/{id}`;
+  history at `GET /cards/{id}/prices?days=N` for future charts.
+
+## Phase 2 — scanner (built 2026-07-13, user request)
+
+- **FAISS server-side only** (AGENTS.md architecture): `backend/data/` holds
+  the index + MobileNetV2 ONNX feature extractor (GAP layer, 1280-d,
+  L2-normalized, cosine/IP search). Derived data, gitignored; rebuild with
+  `python -m etl.build_scan_index` (resumable, checkpoints every 500 cards;
+  card images are fetched transiently and never stored — licensing guardrail).
+- `POST /scan` (multipart photo): OpenCV preprocess → embedding → FAISS top-5
+  → RapidOCR text boosts candidates whose name appears in the photo. Response
+  always carries per-candidate confidence (high/medium/low ≈ ≥0.90/≥0.80),
+  a `low_confidence` flag and a disclaimer — the app must ask the user to
+  confirm and routes low confidence to manual search (never auto-adds).
+- `POST /scan/embedding` accepts a raw vector — the future on-device TFLite
+  path per AGENTS.md. **Deviation, flagged:** on-device extraction is not
+  implemented yet (no physical device to validate); the phone currently
+  uploads the photo and the server embeds it with the same model.
+- OCR engine: RapidOCR (onnxruntime) — pip-only, no system Tesseract needed.
+
 ## Explicitly deferred (later phases)
 
-Scanner/OCR + FAISS (2), prices table + scheduled sync + Celery (3),
-AI grading (4), marketplace (5), Docker images for the apps, Terraform, CI/CD.
+On-device TFLite embedding extraction (phase 2 follow-up), scheduled/Celery
+jobs, price history charts in the app, AI grading (4), marketplace (5),
+Docker images for the apps, Terraform, CI/CD.

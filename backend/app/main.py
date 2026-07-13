@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.routers import auth, cards, collection, sets
+from app.routers import auth, cards, collection, scan, sets
 
 app = FastAPI(
     title="PokeDex TCG Pro API",
@@ -22,6 +22,7 @@ app.include_router(auth.router)
 app.include_router(cards.router)
 app.include_router(sets.router)
 app.include_router(collection.router)
+app.include_router(scan.router)
 
 
 @app.get("/health", tags=["meta"])

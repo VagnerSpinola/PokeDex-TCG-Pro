@@ -18,6 +18,14 @@ dependencies = [
     "httpx>=0.27",
     "greenlet>=3.0",
     "truststore>=0.9",
+    # phase 2 — scanner (server-side FAISS + CV, per AGENTS.md architecture)
+    "faiss-cpu>=1.8",
+    "opencv-python-headless>=4.9",
+    "onnxruntime>=1.17",
+    "rapidocr-onnxruntime>=1.3",
+    "python-multipart>=0.0.9",
+    "numpy>=1.26",
+    "onnx>=1.16",
 ]
 
 [project.optional-dependencies]
