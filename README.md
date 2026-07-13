@@ -42,8 +42,12 @@ python -m etl.sync_cards --set sv1
 # 4. Mobile
 cd ../mobile
 flutter pub get
-flutter run
+dart run build_runner build --force-jit --delete-conflicting-outputs
+flutter run          # Android emulator reaches the API via 10.0.2.2:8000
 ```
+
+> Note: the dev Postgres is published on host port **15432** (5432/5433 are
+> taken by native installs on this machine). See docs/architecture.md.
 
 ## Tests
 

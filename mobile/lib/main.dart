@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -14,7 +15,9 @@ Future<void> main() async {
   await Hive.initFlutter();
   await Hive.openBox<String>(TokenStorage.boxName);
   await Hive.openBox<String>(CardsRepository.cacheBoxName);
-  final localStore = await CollectionLocalStore.open();
+  // sqflite has no web implementation; the offline mirror is mobile-only
+  // (web is a dev-verification target, not a shipping platform).
+  final localStore = kIsWeb ? null : await CollectionLocalStore.open();
 
   runApp(
     ProviderScope(
