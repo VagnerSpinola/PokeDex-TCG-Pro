@@ -8,9 +8,36 @@ async def _add(client: AsyncClient, headers: dict, **overrides) -> dict:
     return resp.json()
 
 
-async def test_collection_requires_auth(client: AsyncClient):
-    assert (await client.get("/collection")).status_code == 401
-    assert (await client.post("/collection", json={"card_id": "x"})).status_code == 401
+async def test_collection_works_without_token_as_default_user(client: AsyncClient, seed_cards):
+    """Auth is out of the app flow for now: anonymous requests share a local user."""
+    resp = await client.get("/collection")
+    assert resp.status_code == 200
+    assert resp.json()["total"] == 0
+
+    resp = await client.post("/collection", json={"card_id": "sv1-25", "quantity": 1})
+    assert resp.status_code == 201
+
+    resp = await client.get("/collection")
+    assert resp.json()["total"] == 1
+
+
+async def test_invalid_token_still_rejected(client: AsyncClient):
+    resp = await client.get("/collection", headers={"Authorization": "Bearer not-a-jwt"})
+    assert resp.status_code == 401
+
+
+async def test_anonymous_and_logged_user_collections_are_separate(
+    client: AsyncClient, seed_cards, auth_headers
+):
+    await client.post("/collection", json={"card_id": "sv1-25", "quantity": 1})
+    await _add(client, auth_headers, card_id="swsh1-1")
+
+    anon = await client.get("/collection")
+    logged = await client.get("/collection", headers=auth_headers)
+    assert anon.json()["total"] == 1
+    assert logged.json()["total"] == 1
+    assert anon.json()["items"][0]["card_id"] == "sv1-25"
+    assert logged.json()["items"][0]["card_id"] == "swsh1-1"
 
 
 async def test_add_and_list_item(client: AsyncClient, seed_cards, auth_headers):

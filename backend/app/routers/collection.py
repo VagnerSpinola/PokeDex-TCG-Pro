@@ -2,7 +2,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, HTTPException, Query, status
 
-from app.dependencies import CurrentUser, DbSession
+from app.dependencies import CurrentUserOrDefault, DbSession
 from app.schemas.collection import (
     CollectionItemCreate,
     CollectionItemOut,
@@ -17,7 +17,7 @@ router = APIRouter(prefix="/collection", tags=["collection"])
 
 @router.get("", response_model=PaginatedCollection)
 async def list_collection(
-    user: CurrentUser,
+    user: CurrentUserOrDefault,
     db: DbSession,
     page: Annotated[int, Query(ge=1)] = 1,
     page_size: Annotated[int, Query(ge=1, le=100)] = 20,
@@ -30,7 +30,7 @@ async def list_collection(
 
 @router.post("", response_model=CollectionItemOut, status_code=status.HTTP_201_CREATED)
 async def add_to_collection(
-    body: CollectionItemCreate, user: CurrentUser, db: DbSession
+    body: CollectionItemCreate, user: CurrentUserOrDefault, db: DbSession
 ) -> CollectionItemOut:
     try:
         item = await collection_service.add_item(
@@ -48,7 +48,7 @@ async def add_to_collection(
 
 @router.patch("/{item_id}", response_model=CollectionItemOut)
 async def update_collection_item(
-    item_id: int, body: CollectionItemUpdate, user: CurrentUser, db: DbSession
+    item_id: int, body: CollectionItemUpdate, user: CurrentUserOrDefault, db: DbSession
 ) -> CollectionItemOut:
     try:
         item = await collection_service.update_item(
@@ -65,7 +65,7 @@ async def update_collection_item(
 
 
 @router.delete("/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_collection_item(item_id: int, user: CurrentUser, db: DbSession) -> None:
+async def delete_collection_item(item_id: int, user: CurrentUserOrDefault, db: DbSession) -> None:
     try:
         await collection_service.delete_item(db, user.id, item_id)
     except collection_service.ItemNotFoundError:
@@ -73,5 +73,5 @@ async def delete_collection_item(item_id: int, user: CurrentUser, db: DbSession)
 
 
 @router.get("/stats", response_model=CollectionStats)
-async def collection_stats(user: CurrentUser, db: DbSession) -> CollectionStats:
+async def collection_stats(user: CurrentUserOrDefault, db: DbSession) -> CollectionStats:
     return CollectionStats(**await collection_service.get_stats(db, user.id))

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:pokedex_tcg_pro/features/auth/data/auth_repository.dart';
 import 'package:pokedex_tcg_pro/features/cards/data/cards_repository.dart';
 import 'package:pokedex_tcg_pro/features/cards/domain/card_models.dart';
 import 'package:pokedex_tcg_pro/features/cards/presentation/cards_screen.dart';
@@ -11,21 +10,15 @@ import '../../helpers.dart';
 
 void main() {
   late MockCardsRepository cardsRepo;
-  late MockAuthRepository authRepo;
 
   setUpAll(registerCommonFallbacks);
 
   setUp(() {
     cardsRepo = MockCardsRepository();
-    authRepo = MockAuthRepository();
-    when(() => authRepo.hasSession).thenReturn(false);
   });
 
   Widget wrap() => ProviderScope(
-        overrides: [
-          cardsRepositoryProvider.overrideWithValue(cardsRepo),
-          authRepositoryProvider.overrideWithValue(authRepo),
-        ],
+        overrides: [cardsRepositoryProvider.overrideWithValue(cardsRepo)],
         child: const MaterialApp(home: CardsScreen()),
       );
 

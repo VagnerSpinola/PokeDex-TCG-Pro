@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../auth/presentation/auth_notifier.dart';
 import '../domain/card_models.dart';
 import 'cards_notifier.dart';
 import 'filter_sheet.dart';
@@ -81,11 +80,6 @@ class _CardsScreenState extends ConsumerState<CardsScreen> {
             icon: const Icon(Icons.collections_bookmark),
             onPressed: () => context.go('/collection'),
             tooltip: 'Minha coleção',
-          ),
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () => ref.read(authNotifierProvider.notifier).logout(),
-            tooltip: 'Sair',
           ),
         ],
         bottom: PreferredSize(

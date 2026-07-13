@@ -1,37 +1,18 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../features/auth/presentation/auth_notifier.dart';
-import '../features/auth/presentation/login_screen.dart';
-import '../features/auth/presentation/register_screen.dart';
 import '../features/cards/presentation/card_detail_screen.dart';
 import '../features/cards/presentation/cards_screen.dart';
 import '../features/collection/presentation/collection_screen.dart';
 
+// Auth is temporarily out of the app flow (user decision, 2026-07-13): the app
+// opens straight on the cards screen and the backend treats anonymous requests
+// as a local default user. The auth feature code stays in lib/features/auth
+// for when login returns.
 final routerProvider = Provider<GoRouter>((ref) {
-  final authState = ref.watch(authNotifierProvider);
-
   return GoRouter(
     initialLocation: '/cards',
-    redirect: (context, state) {
-      final loggingIn =
-          state.matchedLocation == '/login' || state.matchedLocation == '/register';
-      return switch (authState) {
-        AuthUnknown() => '/splash',
-        AuthLoggedOut() => loggingIn ? null : '/login',
-        AuthLoggedIn() =>
-          (loggingIn || state.matchedLocation == '/splash') ? '/cards' : null,
-      };
-    },
     routes: [
-      GoRoute(
-        path: '/splash',
-        builder: (_, _) =>
-            const Scaffold(body: Center(child: CircularProgressIndicator())),
-      ),
-      GoRoute(path: '/login', builder: (_, _) => const LoginScreen()),
-      GoRoute(path: '/register', builder: (_, _) => const RegisterScreen()),
       GoRoute(path: '/cards', builder: (_, _) => const CardsScreen()),
       GoRoute(
         path: '/cards/:id',
