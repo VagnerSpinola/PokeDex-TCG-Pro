@@ -8,7 +8,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from datetime import date
 
-from etl.parsers import card_row, parse_hp, parse_release_date, set_row
+from etl.parsers import card_row, parse_hp, parse_release_date, price_rows, set_row
 
 SET_PAYLOAD = {
     "id": "sv1",
@@ -88,3 +88,47 @@ def test_parse_hp_non_numeric():
 def test_parse_release_date_bad_format():
     assert parse_release_date("31-03-2023") is None
     assert parse_release_date(None) is None
+
+
+PRICED_CARD = {
+    **CARD_PAYLOAD,
+    "tcgplayer": {
+        "url": "https://prices.pokemontcg.io/tcgplayer/sv1-25",
+        "updatedAt": "2026/07/12",
+        "prices": {
+            "normal": {"low": 0.02, "mid": 0.08, "high": 1.0, "market": 0.05},
+            "reverseHolofoil": {"low": 0.05, "mid": 0.2, "high": 2.0, "market": 0.15},
+        },
+    },
+    "cardmarket": {
+        "url": "https://prices.pokemontcg.io/cardmarket/sv1-25",
+        "updatedAt": "2026/07/13",
+        "prices": {"lowPrice": 0.02, "averageSellPrice": 0.09, "trendPrice": 0.07},
+    },
+}
+
+
+def test_price_rows_maps_both_sources():
+    rows = price_rows(PRICED_CARD)
+    assert len(rows) == 3
+
+    tp = {r["variant"]: r for r in rows if r["source"] == "tcgplayer"}
+    assert set(tp) == {"normal", "reverseHolofoil"}
+    assert tp["normal"]["date"] == date(2026, 7, 12)
+    assert tp["normal"]["currency"] == "USD"
+    assert tp["normal"]["market"] == 0.05
+
+    (cm,) = [r for r in rows if r["source"] == "cardmarket"]
+    assert cm["variant"] == "default"
+    assert cm["date"] == date(2026, 7, 13)
+    assert cm["currency"] == "EUR"
+    assert (cm["low"], cm["mid"], cm["market"]) == (0.02, 0.09, 0.07)
+
+
+def test_price_rows_card_without_prices():
+    assert price_rows(CARD_PAYLOAD) == []
+
+
+def test_price_rows_ignores_blocks_without_date():
+    payload = {**CARD_PAYLOAD, "tcgplayer": {"prices": {"normal": {"market": 1.0}}}}
+    assert price_rows(payload) == []

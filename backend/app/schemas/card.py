@@ -34,8 +34,23 @@ class CardOut(BaseModel):
     flavor_text: str | None
 
 
+class PriceOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    source: str
+    variant: str
+    date: date
+    currency: str
+    low: float | None
+    mid: float | None
+    high: float | None
+    market: float | None
+
+
 class CardDetailOut(CardOut):
     set: SetOut
+    # Latest snapshot per (source, variant); empty until the price sync runs.
+    prices: list[PriceOut] = []
 
 
 class PaginatedCards(BaseModel):

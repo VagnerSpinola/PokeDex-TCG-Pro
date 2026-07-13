@@ -108,8 +108,86 @@ class _CardDetail extends StatelessWidget {
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontStyle: FontStyle.italic),
           ),
         ],
+        if (card.prices.isNotEmpty) ...[
+          const SizedBox(height: 16),
+          _PricesSection(prices: card.prices),
+        ],
         const SizedBox(height: 80),
       ],
+    );
+  }
+}
+
+class _PricesSection extends StatelessWidget {
+  const _PricesSection({required this.prices});
+
+  final List<PriceInfo> prices;
+
+  static const _sourceLabels = {'tcgplayer': 'TCGplayer', 'cardmarket': 'Cardmarket'};
+
+  String _variantLabel(String variant) {
+    if (variant == 'default') return '';
+    // camelCase -> words: reverseHolofoil -> Reverse Holofoil
+    final words = variant.replaceAllMapped(
+        RegExp('([a-z0-9])([A-Z])'), (m) => '${m[1]} ${m[2]}');
+    return words[0].toUpperCase() + words.substring(1);
+  }
+
+  String _money(String currency, double? value) {
+    if (value == null) return '—';
+    final symbol = currency == 'EUR' ? '€' : r'$';
+    return '$symbol${value.toStringAsFixed(2)}';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Preço médio de mercado', style: theme.textTheme.titleMedium),
+            const SizedBox(height: 12),
+            for (final p in prices) ...[
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      [
+                        _sourceLabels[p.source] ?? p.source,
+                        if (_variantLabel(p.variant).isNotEmpty) _variantLabel(p.variant),
+                      ].join(' · '),
+                      style: theme.textTheme.bodyMedium,
+                    ),
+                  ),
+                  Text(
+                    _money(p.currency, p.market ?? p.mid),
+                    style: theme.textTheme.titleMedium
+                        ?.copyWith(fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Text(
+                  'baixo ${_money(p.currency, p.low)} · médio ${_money(p.currency, p.mid)}'
+                  '${p.high != null ? ' · alto ${_money(p.currency, p.high)}' : ''}'
+                  ' · em ${p.date}',
+                  style: theme.textTheme.bodySmall,
+                ),
+              ),
+            ],
+            Text(
+              'Fonte: TCGplayer/Cardmarket via Pokémon TCG API — valores de referência, '
+              'não são cotação oficial.',
+              style: theme.textTheme.bodySmall
+                  ?.copyWith(color: theme.colorScheme.outline),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

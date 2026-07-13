@@ -297,9 +297,295 @@ as String?,
 
 
 /// @nodoc
+mixin _$PriceInfo {
+
+ String get source; String get variant; String get date; String get currency; double? get low; double? get mid; double? get high; double? get market;
+/// Create a copy of PriceInfo
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$PriceInfoCopyWith<PriceInfo> get copyWith => _$PriceInfoCopyWithImpl<PriceInfo>(this as PriceInfo, _$identity);
+
+  /// Serializes this PriceInfo to a JSON map.
+  Map<String, dynamic> toJson();
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is PriceInfo&&(identical(other.source, source) || other.source == source)&&(identical(other.variant, variant) || other.variant == variant)&&(identical(other.date, date) || other.date == date)&&(identical(other.currency, currency) || other.currency == currency)&&(identical(other.low, low) || other.low == low)&&(identical(other.mid, mid) || other.mid == mid)&&(identical(other.high, high) || other.high == high)&&(identical(other.market, market) || other.market == market));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,source,variant,date,currency,low,mid,high,market);
+
+@override
+String toString() {
+  return 'PriceInfo(source: $source, variant: $variant, date: $date, currency: $currency, low: $low, mid: $mid, high: $high, market: $market)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $PriceInfoCopyWith<$Res>  {
+  factory $PriceInfoCopyWith(PriceInfo value, $Res Function(PriceInfo) _then) = _$PriceInfoCopyWithImpl;
+@useResult
+$Res call({
+ String source, String variant, String date, String currency, double? low, double? mid, double? high, double? market
+});
+
+
+
+
+}
+/// @nodoc
+class _$PriceInfoCopyWithImpl<$Res>
+    implements $PriceInfoCopyWith<$Res> {
+  _$PriceInfoCopyWithImpl(this._self, this._then);
+
+  final PriceInfo _self;
+  final $Res Function(PriceInfo) _then;
+
+/// Create a copy of PriceInfo
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? source = null,Object? variant = null,Object? date = null,Object? currency = null,Object? low = freezed,Object? mid = freezed,Object? high = freezed,Object? market = freezed,}) {
+  return _then(_self.copyWith(
+source: null == source ? _self.source : source // ignore: cast_nullable_to_non_nullable
+as String,variant: null == variant ? _self.variant : variant // ignore: cast_nullable_to_non_nullable
+as String,date: null == date ? _self.date : date // ignore: cast_nullable_to_non_nullable
+as String,currency: null == currency ? _self.currency : currency // ignore: cast_nullable_to_non_nullable
+as String,low: freezed == low ? _self.low : low // ignore: cast_nullable_to_non_nullable
+as double?,mid: freezed == mid ? _self.mid : mid // ignore: cast_nullable_to_non_nullable
+as double?,high: freezed == high ? _self.high : high // ignore: cast_nullable_to_non_nullable
+as double?,market: freezed == market ? _self.market : market // ignore: cast_nullable_to_non_nullable
+as double?,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [PriceInfo].
+extension PriceInfoPatterns on PriceInfo {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _PriceInfo value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _PriceInfo() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _PriceInfo value)  $default,){
+final _that = this;
+switch (_that) {
+case _PriceInfo():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _PriceInfo value)?  $default,){
+final _that = this;
+switch (_that) {
+case _PriceInfo() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String source,  String variant,  String date,  String currency,  double? low,  double? mid,  double? high,  double? market)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _PriceInfo() when $default != null:
+return $default(_that.source,_that.variant,_that.date,_that.currency,_that.low,_that.mid,_that.high,_that.market);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String source,  String variant,  String date,  String currency,  double? low,  double? mid,  double? high,  double? market)  $default,) {final _that = this;
+switch (_that) {
+case _PriceInfo():
+return $default(_that.source,_that.variant,_that.date,_that.currency,_that.low,_that.mid,_that.high,_that.market);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String source,  String variant,  String date,  String currency,  double? low,  double? mid,  double? high,  double? market)?  $default,) {final _that = this;
+switch (_that) {
+case _PriceInfo() when $default != null:
+return $default(_that.source,_that.variant,_that.date,_that.currency,_that.low,_that.mid,_that.high,_that.market);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+@JsonSerializable()
+
+class _PriceInfo implements PriceInfo {
+  const _PriceInfo({required this.source, required this.variant, required this.date, required this.currency, this.low, this.mid, this.high, this.market});
+  factory _PriceInfo.fromJson(Map<String, dynamic> json) => _$PriceInfoFromJson(json);
+
+@override final  String source;
+@override final  String variant;
+@override final  String date;
+@override final  String currency;
+@override final  double? low;
+@override final  double? mid;
+@override final  double? high;
+@override final  double? market;
+
+/// Create a copy of PriceInfo
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$PriceInfoCopyWith<_PriceInfo> get copyWith => __$PriceInfoCopyWithImpl<_PriceInfo>(this, _$identity);
+
+@override
+Map<String, dynamic> toJson() {
+  return _$PriceInfoToJson(this, );
+}
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PriceInfo&&(identical(other.source, source) || other.source == source)&&(identical(other.variant, variant) || other.variant == variant)&&(identical(other.date, date) || other.date == date)&&(identical(other.currency, currency) || other.currency == currency)&&(identical(other.low, low) || other.low == low)&&(identical(other.mid, mid) || other.mid == mid)&&(identical(other.high, high) || other.high == high)&&(identical(other.market, market) || other.market == market));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,source,variant,date,currency,low,mid,high,market);
+
+@override
+String toString() {
+  return 'PriceInfo(source: $source, variant: $variant, date: $date, currency: $currency, low: $low, mid: $mid, high: $high, market: $market)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$PriceInfoCopyWith<$Res> implements $PriceInfoCopyWith<$Res> {
+  factory _$PriceInfoCopyWith(_PriceInfo value, $Res Function(_PriceInfo) _then) = __$PriceInfoCopyWithImpl;
+@override @useResult
+$Res call({
+ String source, String variant, String date, String currency, double? low, double? mid, double? high, double? market
+});
+
+
+
+
+}
+/// @nodoc
+class __$PriceInfoCopyWithImpl<$Res>
+    implements _$PriceInfoCopyWith<$Res> {
+  __$PriceInfoCopyWithImpl(this._self, this._then);
+
+  final _PriceInfo _self;
+  final $Res Function(_PriceInfo) _then;
+
+/// Create a copy of PriceInfo
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? source = null,Object? variant = null,Object? date = null,Object? currency = null,Object? low = freezed,Object? mid = freezed,Object? high = freezed,Object? market = freezed,}) {
+  return _then(_PriceInfo(
+source: null == source ? _self.source : source // ignore: cast_nullable_to_non_nullable
+as String,variant: null == variant ? _self.variant : variant // ignore: cast_nullable_to_non_nullable
+as String,date: null == date ? _self.date : date // ignore: cast_nullable_to_non_nullable
+as String,currency: null == currency ? _self.currency : currency // ignore: cast_nullable_to_non_nullable
+as String,low: freezed == low ? _self.low : low // ignore: cast_nullable_to_non_nullable
+as double?,mid: freezed == mid ? _self.mid : mid // ignore: cast_nullable_to_non_nullable
+as double?,high: freezed == high ? _self.high : high // ignore: cast_nullable_to_non_nullable
+as double?,market: freezed == market ? _self.market : market // ignore: cast_nullable_to_non_nullable
+as double?,
+  ));
+}
+
+
+}
+
+
+/// @nodoc
 mixin _$TcgCard {
 
- String get id; String get name;@JsonKey(name: 'set_id') String get setId; String? get number; String? get supertype; List<String>? get subtypes; List<String>? get types; String? get rarity; int? get hp; String? get artist;@JsonKey(name: 'image_small_url') String? get imageSmallUrl;@JsonKey(name: 'image_large_url') String? get imageLargeUrl;@JsonKey(name: 'flavor_text') String? get flavorText; SetInfo? get set;
+ String get id; String get name;@JsonKey(name: 'set_id') String get setId; String? get number; String? get supertype; List<String>? get subtypes; List<String>? get types; String? get rarity; int? get hp; String? get artist;@JsonKey(name: 'image_small_url') String? get imageSmallUrl;@JsonKey(name: 'image_large_url') String? get imageLargeUrl;@JsonKey(name: 'flavor_text') String? get flavorText; SetInfo? get set;// Latest market snapshot per source/variant; only present on the detail
+// endpoint and empty until the price sync has run.
+ List<PriceInfo> get prices;
 /// Create a copy of TcgCard
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -312,16 +598,16 @@ $TcgCardCopyWith<TcgCard> get copyWith => _$TcgCardCopyWithImpl<TcgCard>(this as
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TcgCard&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.setId, setId) || other.setId == setId)&&(identical(other.number, number) || other.number == number)&&(identical(other.supertype, supertype) || other.supertype == supertype)&&const DeepCollectionEquality().equals(other.subtypes, subtypes)&&const DeepCollectionEquality().equals(other.types, types)&&(identical(other.rarity, rarity) || other.rarity == rarity)&&(identical(other.hp, hp) || other.hp == hp)&&(identical(other.artist, artist) || other.artist == artist)&&(identical(other.imageSmallUrl, imageSmallUrl) || other.imageSmallUrl == imageSmallUrl)&&(identical(other.imageLargeUrl, imageLargeUrl) || other.imageLargeUrl == imageLargeUrl)&&(identical(other.flavorText, flavorText) || other.flavorText == flavorText)&&(identical(other.set, set) || other.set == set));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TcgCard&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.setId, setId) || other.setId == setId)&&(identical(other.number, number) || other.number == number)&&(identical(other.supertype, supertype) || other.supertype == supertype)&&const DeepCollectionEquality().equals(other.subtypes, subtypes)&&const DeepCollectionEquality().equals(other.types, types)&&(identical(other.rarity, rarity) || other.rarity == rarity)&&(identical(other.hp, hp) || other.hp == hp)&&(identical(other.artist, artist) || other.artist == artist)&&(identical(other.imageSmallUrl, imageSmallUrl) || other.imageSmallUrl == imageSmallUrl)&&(identical(other.imageLargeUrl, imageLargeUrl) || other.imageLargeUrl == imageLargeUrl)&&(identical(other.flavorText, flavorText) || other.flavorText == flavorText)&&(identical(other.set, set) || other.set == set)&&const DeepCollectionEquality().equals(other.prices, prices));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,setId,number,supertype,const DeepCollectionEquality().hash(subtypes),const DeepCollectionEquality().hash(types),rarity,hp,artist,imageSmallUrl,imageLargeUrl,flavorText,set);
+int get hashCode => Object.hash(runtimeType,id,name,setId,number,supertype,const DeepCollectionEquality().hash(subtypes),const DeepCollectionEquality().hash(types),rarity,hp,artist,imageSmallUrl,imageLargeUrl,flavorText,set,const DeepCollectionEquality().hash(prices));
 
 @override
 String toString() {
-  return 'TcgCard(id: $id, name: $name, setId: $setId, number: $number, supertype: $supertype, subtypes: $subtypes, types: $types, rarity: $rarity, hp: $hp, artist: $artist, imageSmallUrl: $imageSmallUrl, imageLargeUrl: $imageLargeUrl, flavorText: $flavorText, set: $set)';
+  return 'TcgCard(id: $id, name: $name, setId: $setId, number: $number, supertype: $supertype, subtypes: $subtypes, types: $types, rarity: $rarity, hp: $hp, artist: $artist, imageSmallUrl: $imageSmallUrl, imageLargeUrl: $imageLargeUrl, flavorText: $flavorText, set: $set, prices: $prices)';
 }
 
 
@@ -332,7 +618,7 @@ abstract mixin class $TcgCardCopyWith<$Res>  {
   factory $TcgCardCopyWith(TcgCard value, $Res Function(TcgCard) _then) = _$TcgCardCopyWithImpl;
 @useResult
 $Res call({
- String id, String name,@JsonKey(name: 'set_id') String setId, String? number, String? supertype, List<String>? subtypes, List<String>? types, String? rarity, int? hp, String? artist,@JsonKey(name: 'image_small_url') String? imageSmallUrl,@JsonKey(name: 'image_large_url') String? imageLargeUrl,@JsonKey(name: 'flavor_text') String? flavorText, SetInfo? set
+ String id, String name,@JsonKey(name: 'set_id') String setId, String? number, String? supertype, List<String>? subtypes, List<String>? types, String? rarity, int? hp, String? artist,@JsonKey(name: 'image_small_url') String? imageSmallUrl,@JsonKey(name: 'image_large_url') String? imageLargeUrl,@JsonKey(name: 'flavor_text') String? flavorText, SetInfo? set, List<PriceInfo> prices
 });
 
 
@@ -349,7 +635,7 @@ class _$TcgCardCopyWithImpl<$Res>
 
 /// Create a copy of TcgCard
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? setId = null,Object? number = freezed,Object? supertype = freezed,Object? subtypes = freezed,Object? types = freezed,Object? rarity = freezed,Object? hp = freezed,Object? artist = freezed,Object? imageSmallUrl = freezed,Object? imageLargeUrl = freezed,Object? flavorText = freezed,Object? set = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? setId = null,Object? number = freezed,Object? supertype = freezed,Object? subtypes = freezed,Object? types = freezed,Object? rarity = freezed,Object? hp = freezed,Object? artist = freezed,Object? imageSmallUrl = freezed,Object? imageLargeUrl = freezed,Object? flavorText = freezed,Object? set = freezed,Object? prices = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
@@ -365,7 +651,8 @@ as String?,imageSmallUrl: freezed == imageSmallUrl ? _self.imageSmallUrl : image
 as String?,imageLargeUrl: freezed == imageLargeUrl ? _self.imageLargeUrl : imageLargeUrl // ignore: cast_nullable_to_non_nullable
 as String?,flavorText: freezed == flavorText ? _self.flavorText : flavorText // ignore: cast_nullable_to_non_nullable
 as String?,set: freezed == set ? _self.set : set // ignore: cast_nullable_to_non_nullable
-as SetInfo?,
+as SetInfo?,prices: null == prices ? _self.prices : prices // ignore: cast_nullable_to_non_nullable
+as List<PriceInfo>,
   ));
 }
 /// Create a copy of TcgCard
@@ -462,10 +749,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name, @JsonKey(name: 'set_id')  String setId,  String? number,  String? supertype,  List<String>? subtypes,  List<String>? types,  String? rarity,  int? hp,  String? artist, @JsonKey(name: 'image_small_url')  String? imageSmallUrl, @JsonKey(name: 'image_large_url')  String? imageLargeUrl, @JsonKey(name: 'flavor_text')  String? flavorText,  SetInfo? set)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name, @JsonKey(name: 'set_id')  String setId,  String? number,  String? supertype,  List<String>? subtypes,  List<String>? types,  String? rarity,  int? hp,  String? artist, @JsonKey(name: 'image_small_url')  String? imageSmallUrl, @JsonKey(name: 'image_large_url')  String? imageLargeUrl, @JsonKey(name: 'flavor_text')  String? flavorText,  SetInfo? set,  List<PriceInfo> prices)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _TcgCard() when $default != null:
-return $default(_that.id,_that.name,_that.setId,_that.number,_that.supertype,_that.subtypes,_that.types,_that.rarity,_that.hp,_that.artist,_that.imageSmallUrl,_that.imageLargeUrl,_that.flavorText,_that.set);case _:
+return $default(_that.id,_that.name,_that.setId,_that.number,_that.supertype,_that.subtypes,_that.types,_that.rarity,_that.hp,_that.artist,_that.imageSmallUrl,_that.imageLargeUrl,_that.flavorText,_that.set,_that.prices);case _:
   return orElse();
 
 }
@@ -483,10 +770,10 @@ return $default(_that.id,_that.name,_that.setId,_that.number,_that.supertype,_th
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name, @JsonKey(name: 'set_id')  String setId,  String? number,  String? supertype,  List<String>? subtypes,  List<String>? types,  String? rarity,  int? hp,  String? artist, @JsonKey(name: 'image_small_url')  String? imageSmallUrl, @JsonKey(name: 'image_large_url')  String? imageLargeUrl, @JsonKey(name: 'flavor_text')  String? flavorText,  SetInfo? set)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name, @JsonKey(name: 'set_id')  String setId,  String? number,  String? supertype,  List<String>? subtypes,  List<String>? types,  String? rarity,  int? hp,  String? artist, @JsonKey(name: 'image_small_url')  String? imageSmallUrl, @JsonKey(name: 'image_large_url')  String? imageLargeUrl, @JsonKey(name: 'flavor_text')  String? flavorText,  SetInfo? set,  List<PriceInfo> prices)  $default,) {final _that = this;
 switch (_that) {
 case _TcgCard():
-return $default(_that.id,_that.name,_that.setId,_that.number,_that.supertype,_that.subtypes,_that.types,_that.rarity,_that.hp,_that.artist,_that.imageSmallUrl,_that.imageLargeUrl,_that.flavorText,_that.set);case _:
+return $default(_that.id,_that.name,_that.setId,_that.number,_that.supertype,_that.subtypes,_that.types,_that.rarity,_that.hp,_that.artist,_that.imageSmallUrl,_that.imageLargeUrl,_that.flavorText,_that.set,_that.prices);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -503,10 +790,10 @@ return $default(_that.id,_that.name,_that.setId,_that.number,_that.supertype,_th
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name, @JsonKey(name: 'set_id')  String setId,  String? number,  String? supertype,  List<String>? subtypes,  List<String>? types,  String? rarity,  int? hp,  String? artist, @JsonKey(name: 'image_small_url')  String? imageSmallUrl, @JsonKey(name: 'image_large_url')  String? imageLargeUrl, @JsonKey(name: 'flavor_text')  String? flavorText,  SetInfo? set)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name, @JsonKey(name: 'set_id')  String setId,  String? number,  String? supertype,  List<String>? subtypes,  List<String>? types,  String? rarity,  int? hp,  String? artist, @JsonKey(name: 'image_small_url')  String? imageSmallUrl, @JsonKey(name: 'image_large_url')  String? imageLargeUrl, @JsonKey(name: 'flavor_text')  String? flavorText,  SetInfo? set,  List<PriceInfo> prices)?  $default,) {final _that = this;
 switch (_that) {
 case _TcgCard() when $default != null:
-return $default(_that.id,_that.name,_that.setId,_that.number,_that.supertype,_that.subtypes,_that.types,_that.rarity,_that.hp,_that.artist,_that.imageSmallUrl,_that.imageLargeUrl,_that.flavorText,_that.set);case _:
+return $default(_that.id,_that.name,_that.setId,_that.number,_that.supertype,_that.subtypes,_that.types,_that.rarity,_that.hp,_that.artist,_that.imageSmallUrl,_that.imageLargeUrl,_that.flavorText,_that.set,_that.prices);case _:
   return null;
 
 }
@@ -518,7 +805,7 @@ return $default(_that.id,_that.name,_that.setId,_that.number,_that.supertype,_th
 @JsonSerializable()
 
 class _TcgCard implements TcgCard {
-  const _TcgCard({required this.id, required this.name, @JsonKey(name: 'set_id') required this.setId, this.number, this.supertype, final  List<String>? subtypes, final  List<String>? types, this.rarity, this.hp, this.artist, @JsonKey(name: 'image_small_url') this.imageSmallUrl, @JsonKey(name: 'image_large_url') this.imageLargeUrl, @JsonKey(name: 'flavor_text') this.flavorText, this.set}): _subtypes = subtypes,_types = types;
+  const _TcgCard({required this.id, required this.name, @JsonKey(name: 'set_id') required this.setId, this.number, this.supertype, final  List<String>? subtypes, final  List<String>? types, this.rarity, this.hp, this.artist, @JsonKey(name: 'image_small_url') this.imageSmallUrl, @JsonKey(name: 'image_large_url') this.imageLargeUrl, @JsonKey(name: 'flavor_text') this.flavorText, this.set, final  List<PriceInfo> prices = const []}): _subtypes = subtypes,_types = types,_prices = prices;
   factory _TcgCard.fromJson(Map<String, dynamic> json) => _$TcgCardFromJson(json);
 
 @override final  String id;
@@ -551,6 +838,17 @@ class _TcgCard implements TcgCard {
 @override@JsonKey(name: 'image_large_url') final  String? imageLargeUrl;
 @override@JsonKey(name: 'flavor_text') final  String? flavorText;
 @override final  SetInfo? set;
+// Latest market snapshot per source/variant; only present on the detail
+// endpoint and empty until the price sync has run.
+ final  List<PriceInfo> _prices;
+// Latest market snapshot per source/variant; only present on the detail
+// endpoint and empty until the price sync has run.
+@override@JsonKey() List<PriceInfo> get prices {
+  if (_prices is EqualUnmodifiableListView) return _prices;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_prices);
+}
+
 
 /// Create a copy of TcgCard
 /// with the given fields replaced by the non-null parameter values.
@@ -565,16 +863,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TcgCard&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.setId, setId) || other.setId == setId)&&(identical(other.number, number) || other.number == number)&&(identical(other.supertype, supertype) || other.supertype == supertype)&&const DeepCollectionEquality().equals(other._subtypes, _subtypes)&&const DeepCollectionEquality().equals(other._types, _types)&&(identical(other.rarity, rarity) || other.rarity == rarity)&&(identical(other.hp, hp) || other.hp == hp)&&(identical(other.artist, artist) || other.artist == artist)&&(identical(other.imageSmallUrl, imageSmallUrl) || other.imageSmallUrl == imageSmallUrl)&&(identical(other.imageLargeUrl, imageLargeUrl) || other.imageLargeUrl == imageLargeUrl)&&(identical(other.flavorText, flavorText) || other.flavorText == flavorText)&&(identical(other.set, set) || other.set == set));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TcgCard&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.setId, setId) || other.setId == setId)&&(identical(other.number, number) || other.number == number)&&(identical(other.supertype, supertype) || other.supertype == supertype)&&const DeepCollectionEquality().equals(other._subtypes, _subtypes)&&const DeepCollectionEquality().equals(other._types, _types)&&(identical(other.rarity, rarity) || other.rarity == rarity)&&(identical(other.hp, hp) || other.hp == hp)&&(identical(other.artist, artist) || other.artist == artist)&&(identical(other.imageSmallUrl, imageSmallUrl) || other.imageSmallUrl == imageSmallUrl)&&(identical(other.imageLargeUrl, imageLargeUrl) || other.imageLargeUrl == imageLargeUrl)&&(identical(other.flavorText, flavorText) || other.flavorText == flavorText)&&(identical(other.set, set) || other.set == set)&&const DeepCollectionEquality().equals(other._prices, _prices));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,setId,number,supertype,const DeepCollectionEquality().hash(_subtypes),const DeepCollectionEquality().hash(_types),rarity,hp,artist,imageSmallUrl,imageLargeUrl,flavorText,set);
+int get hashCode => Object.hash(runtimeType,id,name,setId,number,supertype,const DeepCollectionEquality().hash(_subtypes),const DeepCollectionEquality().hash(_types),rarity,hp,artist,imageSmallUrl,imageLargeUrl,flavorText,set,const DeepCollectionEquality().hash(_prices));
 
 @override
 String toString() {
-  return 'TcgCard(id: $id, name: $name, setId: $setId, number: $number, supertype: $supertype, subtypes: $subtypes, types: $types, rarity: $rarity, hp: $hp, artist: $artist, imageSmallUrl: $imageSmallUrl, imageLargeUrl: $imageLargeUrl, flavorText: $flavorText, set: $set)';
+  return 'TcgCard(id: $id, name: $name, setId: $setId, number: $number, supertype: $supertype, subtypes: $subtypes, types: $types, rarity: $rarity, hp: $hp, artist: $artist, imageSmallUrl: $imageSmallUrl, imageLargeUrl: $imageLargeUrl, flavorText: $flavorText, set: $set, prices: $prices)';
 }
 
 
@@ -585,7 +883,7 @@ abstract mixin class _$TcgCardCopyWith<$Res> implements $TcgCardCopyWith<$Res> {
   factory _$TcgCardCopyWith(_TcgCard value, $Res Function(_TcgCard) _then) = __$TcgCardCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String name,@JsonKey(name: 'set_id') String setId, String? number, String? supertype, List<String>? subtypes, List<String>? types, String? rarity, int? hp, String? artist,@JsonKey(name: 'image_small_url') String? imageSmallUrl,@JsonKey(name: 'image_large_url') String? imageLargeUrl,@JsonKey(name: 'flavor_text') String? flavorText, SetInfo? set
+ String id, String name,@JsonKey(name: 'set_id') String setId, String? number, String? supertype, List<String>? subtypes, List<String>? types, String? rarity, int? hp, String? artist,@JsonKey(name: 'image_small_url') String? imageSmallUrl,@JsonKey(name: 'image_large_url') String? imageLargeUrl,@JsonKey(name: 'flavor_text') String? flavorText, SetInfo? set, List<PriceInfo> prices
 });
 
 
@@ -602,7 +900,7 @@ class __$TcgCardCopyWithImpl<$Res>
 
 /// Create a copy of TcgCard
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? setId = null,Object? number = freezed,Object? supertype = freezed,Object? subtypes = freezed,Object? types = freezed,Object? rarity = freezed,Object? hp = freezed,Object? artist = freezed,Object? imageSmallUrl = freezed,Object? imageLargeUrl = freezed,Object? flavorText = freezed,Object? set = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? setId = null,Object? number = freezed,Object? supertype = freezed,Object? subtypes = freezed,Object? types = freezed,Object? rarity = freezed,Object? hp = freezed,Object? artist = freezed,Object? imageSmallUrl = freezed,Object? imageLargeUrl = freezed,Object? flavorText = freezed,Object? set = freezed,Object? prices = null,}) {
   return _then(_TcgCard(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
@@ -618,7 +916,8 @@ as String?,imageSmallUrl: freezed == imageSmallUrl ? _self.imageSmallUrl : image
 as String?,imageLargeUrl: freezed == imageLargeUrl ? _self.imageLargeUrl : imageLargeUrl // ignore: cast_nullable_to_non_nullable
 as String?,flavorText: freezed == flavorText ? _self.flavorText : flavorText // ignore: cast_nullable_to_non_nullable
 as String?,set: freezed == set ? _self.set : set // ignore: cast_nullable_to_non_nullable
-as SetInfo?,
+as SetInfo?,prices: null == prices ? _self._prices : prices // ignore: cast_nullable_to_non_nullable
+as List<PriceInfo>,
   ));
 }
 

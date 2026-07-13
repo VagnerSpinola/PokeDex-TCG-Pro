@@ -1,7 +1,9 @@
+from datetime import date, timedelta
+
 from sqlalchemy import Select, Text, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models import Card, Set
+from app.models import Card, Price, Set
 
 
 def _apply_card_filters(
@@ -55,6 +57,34 @@ async def list_cards(
 
 async def get_card(db: AsyncSession, card_id: str) -> Card | None:
     return await db.get(Card, card_id)
+
+
+async def latest_prices(db: AsyncSession, card_id: str) -> list[Price]:
+    """Most recent snapshot per (source, variant)."""
+    stmt = (
+        select(Price)
+        .where(Price.card_id == card_id)
+        .order_by(Price.source, Price.variant, Price.date.desc())
+    )
+    rows = (await db.scalars(stmt)).all()
+    seen: set[tuple[str, str]] = set()
+    out: list[Price] = []
+    for price in rows:
+        key = (price.source, price.variant)
+        if key not in seen:
+            seen.add(key)
+            out.append(price)
+    return out
+
+
+async def price_history(db: AsyncSession, card_id: str, days: int) -> list[Price]:
+    cutoff = date.today() - timedelta(days=days)
+    stmt = (
+        select(Price)
+        .where(Price.card_id == card_id, Price.date >= cutoff)
+        .order_by(Price.date, Price.source, Price.variant)
+    )
+    return list((await db.scalars(stmt)).all())
 
 
 async def list_sets(db: AsyncSession) -> list[Set]:

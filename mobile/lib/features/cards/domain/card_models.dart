@@ -20,6 +20,22 @@ abstract class SetInfo with _$SetInfo {
 }
 
 @freezed
+abstract class PriceInfo with _$PriceInfo {
+  const factory PriceInfo({
+    required String source,
+    required String variant,
+    required String date,
+    required String currency,
+    double? low,
+    double? mid,
+    double? high,
+    double? market,
+  }) = _PriceInfo;
+
+  factory PriceInfo.fromJson(Map<String, dynamic> json) => _$PriceInfoFromJson(json);
+}
+
+@freezed
 abstract class TcgCard with _$TcgCard {
   const factory TcgCard({
     required String id,
@@ -36,6 +52,9 @@ abstract class TcgCard with _$TcgCard {
     @JsonKey(name: 'image_large_url') String? imageLargeUrl,
     @JsonKey(name: 'flavor_text') String? flavorText,
     SetInfo? set,
+    // Latest market snapshot per source/variant; only present on the detail
+    // endpoint and empty until the price sync has run.
+    @Default([]) List<PriceInfo> prices,
   }) = _TcgCard;
 
   factory TcgCard.fromJson(Map<String, dynamic> json) => _$TcgCardFromJson(json);

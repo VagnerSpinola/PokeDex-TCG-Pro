@@ -28,6 +28,29 @@ Map<String, dynamic> _$SetInfoToJson(_SetInfo instance) => <String, dynamic>{
   'logo_url': instance.logoUrl,
 };
 
+_PriceInfo _$PriceInfoFromJson(Map<String, dynamic> json) => _PriceInfo(
+  source: json['source'] as String,
+  variant: json['variant'] as String,
+  date: json['date'] as String,
+  currency: json['currency'] as String,
+  low: (json['low'] as num?)?.toDouble(),
+  mid: (json['mid'] as num?)?.toDouble(),
+  high: (json['high'] as num?)?.toDouble(),
+  market: (json['market'] as num?)?.toDouble(),
+);
+
+Map<String, dynamic> _$PriceInfoToJson(_PriceInfo instance) =>
+    <String, dynamic>{
+      'source': instance.source,
+      'variant': instance.variant,
+      'date': instance.date,
+      'currency': instance.currency,
+      'low': instance.low,
+      'mid': instance.mid,
+      'high': instance.high,
+      'market': instance.market,
+    };
+
 _TcgCard _$TcgCardFromJson(Map<String, dynamic> json) => _TcgCard(
   id: json['id'] as String,
   name: json['name'] as String,
@@ -47,6 +70,11 @@ _TcgCard _$TcgCardFromJson(Map<String, dynamic> json) => _TcgCard(
   set: json['set'] == null
       ? null
       : SetInfo.fromJson(json['set'] as Map<String, dynamic>),
+  prices:
+      (json['prices'] as List<dynamic>?)
+          ?.map((e) => PriceInfo.fromJson(e as Map<String, dynamic>))
+          .toList() ??
+      const [],
 );
 
 Map<String, dynamic> _$TcgCardToJson(_TcgCard instance) => <String, dynamic>{
@@ -64,6 +92,7 @@ Map<String, dynamic> _$TcgCardToJson(_TcgCard instance) => <String, dynamic>{
   'image_large_url': instance.imageLargeUrl,
   'flavor_text': instance.flavorText,
   'set': instance.set,
+  'prices': instance.prices,
 };
 
 _PaginatedCards _$PaginatedCardsFromJson(Map<String, dynamic> json) =>

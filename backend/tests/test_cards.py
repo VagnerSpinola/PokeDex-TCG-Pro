@@ -75,3 +75,65 @@ async def test_get_set(client: AsyncClient, seed_cards):
 async def test_get_set_not_found(client: AsyncClient):
     resp = await client.get("/sets/nope")
     assert resp.status_code == 404
+
+
+async def _seed_prices(db):
+    from datetime import date, timedelta
+
+    from app.models import Price
+
+    today = date.today()
+    db.add_all([
+        # two snapshots of the same source/variant — only the newest should
+        # appear on the card detail
+        Price(card_id="sv1-25", source="tcgplayer", variant="normal", date=today,
+              currency="USD", low=1, mid=2, high=5, market=3),
+        Price(card_id="sv1-25", source="tcgplayer", variant="normal",
+              date=today - timedelta(days=1), currency="USD", low=1, mid=2, high=5, market=2),
+        Price(card_id="sv1-25", source="tcgplayer", variant="holofoil", date=today,
+              currency="USD", low=5, mid=8, high=20, market=9),
+        Price(card_id="sv1-25", source="cardmarket", variant="default", date=today,
+              currency="EUR", low=1, mid=2, high=None, market=2.5),
+        # old snapshot outside a 30-day window
+        Price(card_id="sv1-25", source="cardmarket", variant="default",
+              date=today - timedelta(days=200), currency="EUR", low=9, mid=9, high=None, market=9),
+    ])
+    await db.commit()
+
+
+async def test_card_detail_includes_latest_prices_only(client: AsyncClient, seed_cards, db):
+    await _seed_prices(db)
+
+    resp = await client.get("/cards/sv1-25")
+    assert resp.status_code == 200
+    prices = resp.json()["prices"]
+    assert len(prices) == 3  # tcgplayer normal + holofoil, cardmarket default
+
+    normal = next(p for p in prices if p["source"] == "tcgplayer" and p["variant"] == "normal")
+    assert normal["market"] == 3.0  # today's snapshot, not yesterday's
+    assert normal["currency"] == "USD"
+
+
+async def test_card_detail_without_prices_has_empty_list(client: AsyncClient, seed_cards):
+    resp = await client.get("/cards/sv1-25")
+    assert resp.status_code == 200
+    assert resp.json()["prices"] == []
+
+
+async def test_price_history_window_and_order(client: AsyncClient, seed_cards, db):
+    await _seed_prices(db)
+
+    resp = await client.get("/cards/sv1-25/prices", params={"days": 30})
+    assert resp.status_code == 200
+    history = resp.json()
+    assert len(history) == 4  # excludes the 200-day-old snapshot
+    dates = [p["date"] for p in history]
+    assert dates == sorted(dates)
+
+    resp = await client.get("/cards/sv1-25/prices", params={"days": 365})
+    assert len(resp.json()) == 5
+
+
+async def test_price_history_unknown_card_404(client: AsyncClient, seed_cards):
+    resp = await client.get("/cards/nope-1/prices")
+    assert resp.status_code == 404

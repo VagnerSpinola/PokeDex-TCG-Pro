@@ -35,6 +35,50 @@ def set_row(payload: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+def price_rows(payload: dict[str, Any]) -> list[dict[str, Any]]:
+    """Extract daily price snapshots from a card payload.
+
+    TCGplayer publishes one block per printing variant (normal, holofoil, ...)
+    in USD; Cardmarket publishes a single EUR block mapped to variant 'default'
+    (low=lowPrice, mid=averageSellPrice, market=trendPrice).
+    """
+    card_id = payload["id"]
+    rows: list[dict[str, Any]] = []
+
+    tcgplayer = payload.get("tcgplayer") or {}
+    tp_date = parse_release_date(tcgplayer.get("updatedAt"))
+    if tp_date:
+        for variant, p in (tcgplayer.get("prices") or {}).items():
+            rows.append({
+                "card_id": card_id,
+                "source": "tcgplayer",
+                "variant": variant,
+                "date": tp_date,
+                "currency": "USD",
+                "low": p.get("low"),
+                "mid": p.get("mid"),
+                "high": p.get("high"),
+                "market": p.get("market"),
+            })
+
+    cardmarket = payload.get("cardmarket") or {}
+    cm_date = parse_release_date(cardmarket.get("updatedAt"))
+    cm_prices = cardmarket.get("prices") or {}
+    if cm_date and cm_prices:
+        rows.append({
+            "card_id": card_id,
+            "source": "cardmarket",
+            "variant": "default",
+            "date": cm_date,
+            "currency": "EUR",
+            "low": cm_prices.get("lowPrice"),
+            "mid": cm_prices.get("averageSellPrice"),
+            "high": None,
+            "market": cm_prices.get("trendPrice"),
+        })
+    return rows
+
+
 def card_row(payload: dict[str, Any]) -> dict[str, Any]:
     images = payload.get("images") or {}
     return {

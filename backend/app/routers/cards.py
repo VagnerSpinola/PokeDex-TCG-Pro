@@ -3,7 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter, HTTPException, Query, status
 
 from app.dependencies import DbSession
-from app.schemas.card import CardDetailOut, PaginatedCards
+from app.schemas.card import CardDetailOut, PaginatedCards, PriceOut
 from app.services import card_service
 
 router = APIRouter(prefix="/cards", tags=["cards"])
@@ -38,4 +38,19 @@ async def get_card(card_id: str, db: DbSession) -> CardDetailOut:
     card = await card_service.get_card(db, card_id)
     if card is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Card not found")
-    return CardDetailOut.model_validate(card)
+    prices = await card_service.latest_prices(db, card_id)
+    detail = CardDetailOut.model_validate(card)
+    return detail.model_copy(update={"prices": [PriceOut.model_validate(p) for p in prices]})
+
+
+@router.get("/{card_id}/prices", response_model=list[PriceOut])
+async def get_card_price_history(
+    card_id: str,
+    db: DbSession,
+    days: Annotated[int, Query(ge=1, le=365)] = 90,
+) -> list[PriceOut]:
+    card = await card_service.get_card(db, card_id)
+    if card is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Card not found")
+    history = await card_service.price_history(db, card_id, days)
+    return [PriceOut.model_validate(p) for p in history]
