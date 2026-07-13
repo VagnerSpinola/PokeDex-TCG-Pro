@@ -64,6 +64,34 @@ async def sync_cards(engine: AsyncEngine, client: PokemonTcgClient, set_id: str 
     return count
 
 
+async def sync_all_cards_by_set(engine: AsyncEngine, client: PokemonTcgClient) -> int:
+    """Sync cards one set at a time, skipping sets that are already complete.
+
+    The API's deep pagination on the global /cards endpoint is unreliable
+    (random 404s/timeouts past a few thousand cards); per-set queries are
+    small and stable, and this approach is resumable — re-running only
+    fetches sets whose local card count is below the set's advertised total.
+    """
+    from sqlalchemy import func, select
+
+    async with engine.connect() as conn:
+        db_counts = dict(
+            (await conn.execute(select(Card.set_id, func.count()).group_by(Card.set_id))).all()
+        )
+        sets_rows = (
+            await conn.execute(select(Set.__table__.c.id, Set.__table__.c.total))
+        ).all()
+
+    synced = 0
+    pending = [(sid, total) for sid, total in sets_rows if not (total and db_counts.get(sid, 0) >= total)]
+    print(f"{len(sets_rows) - len(pending)} sets already complete, {len(pending)} to sync")
+    for i, (set_id, total) in enumerate(pending, 1):
+        n = await sync_cards(engine, client, set_id)
+        synced += n
+        print(f"[{i}/{len(pending)}] set {set_id}: {n} cards (expected {total})", flush=True)
+    return synced
+
+
 async def main() -> None:
     parser = argparse.ArgumentParser(description="Sync Pokémon TCG API data into Postgres")
     parser.add_argument("--set", dest="set_id", help="only sync cards of this set id (e.g. sv1)")
@@ -76,9 +104,12 @@ async def main() -> None:
     try:
         n_sets = await sync_sets(engine, client)
         print(f"synced {n_sets} sets")
-        if not args.sets_only:
+        if args.set_id:
             n_cards = await sync_cards(engine, client, args.set_id)
-            print(f"synced {n_cards} cards" + (f" (set {args.set_id})" if args.set_id else ""))
+            print(f"synced {n_cards} cards (set {args.set_id})")
+        elif not args.sets_only:
+            n_cards = await sync_all_cards_by_set(engine, client)
+            print(f"synced {n_cards} cards")
     finally:
         await client.close()
         await engine.dispose()
