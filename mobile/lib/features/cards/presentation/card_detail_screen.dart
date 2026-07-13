@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../collection/presentation/add_to_collection_sheet.dart';
 import '../data/cards_repository.dart';
@@ -16,7 +17,15 @@ class CardDetailScreen extends ConsumerWidget {
     final card = ref.watch(cardDetailProvider(cardId));
 
     return Scaffold(
-      appBar: AppBar(title: Text(card.value?.name ?? 'Carta')),
+      appBar: AppBar(
+        title: Text(card.value?.name ?? 'Carta'),
+        // Fallback for deep links/web reloads where there is nothing to pop.
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          tooltip: 'Voltar',
+          onPressed: () => context.canPop() ? context.pop() : context.go('/cards'),
+        ),
+      ),
       body: card.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (_, _) => Center(

@@ -145,7 +145,7 @@ class _CollectionTile extends ConsumerWidget {
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
         ),
-        onTap: () => context.go('/cards/${item.cardId}'),
+        onTap: () => context.push('/cards/${item.cardId}'),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [

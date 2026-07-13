@@ -147,7 +147,7 @@ class _CardTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => context.go('/cards/${card.id}'),
+      onTap: () => context.push('/cards/${card.id}'),
       borderRadius: BorderRadius.circular(8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
