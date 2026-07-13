@@ -36,6 +36,10 @@ class CardsRepository {
 
   static const cacheBoxName = 'cards_cache';
 
+  // Bump when the API response shape changes (e.g. prices added) so stale
+  // cached entries from an older schema are ignored.
+  static const _cacheVersion = 'v2';
+
   final Dio _dio;
   final _TtlCache _cache;
 
@@ -49,7 +53,7 @@ class CardsRepository {
       if (filters.supertype != null) 'supertype': filters.supertype,
       if (filters.type != null) 'type': filters.type,
     };
-    final cacheKey = 'cards:${jsonEncode(params)}';
+    final cacheKey = '$_cacheVersion:cards:${jsonEncode(params)}';
     final cached = _cache.get(cacheKey);
     if (cached != null) return PaginatedCards.fromJson(cached);
 
@@ -59,7 +63,7 @@ class CardsRepository {
   }
 
   Future<TcgCard> getCard(String id) async {
-    final cacheKey = 'card:$id';
+    final cacheKey = '$_cacheVersion:card:$id';
     final cached = _cache.get(cacheKey);
     if (cached != null) return TcgCard.fromJson(cached);
 
@@ -69,7 +73,7 @@ class CardsRepository {
   }
 
   Future<List<SetInfo>> listSets() async {
-    final cacheKey = 'sets';
+    final cacheKey = '$_cacheVersion:sets';
     final cached = _cache.get(cacheKey);
     if (cached != null) {
       return (cached['items'] as List)
