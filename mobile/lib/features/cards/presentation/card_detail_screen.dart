@@ -8,6 +8,7 @@ import '../../../core/widgets/holo.dart';
 import '../../collection/presentation/add_to_collection_sheet.dart';
 import '../data/cards_repository.dart';
 import '../domain/card_models.dart';
+import 'price_history_section.dart';
 
 class CardDetailScreen extends ConsumerWidget {
   const CardDetailScreen({super.key, required this.cardId});
@@ -130,6 +131,8 @@ class _CardDetail extends StatelessWidget {
         if (card.prices.isNotEmpty) ...[
           const SizedBox(height: 16),
           _PricesSection(prices: card.prices),
+          const SizedBox(height: 12),
+          PriceHistorySection(cardId: card.id),
         ],
         const SizedBox(height: 80),
       ],

@@ -64,6 +64,22 @@ class CardsRepository {
     return PaginatedCards.fromJson(resp.data!);
   }
 
+  Future<List<PriceInfo>> priceHistory(String id, {int days = 90}) async {
+    final cacheKey = '$_cacheVersion:history:$id:$days';
+    final cached = _cache.get(cacheKey);
+    if (cached != null) {
+      return (cached['items'] as List)
+          .map((e) => PriceInfo.fromJson(e as Map<String, dynamic>))
+          .toList();
+    }
+    final resp = await _dio.get<List<dynamic>>(
+      '/cards/$id/prices',
+      queryParameters: {'days': days},
+    );
+    await _cache.put(cacheKey, {'items': resp.data!});
+    return resp.data!.map((e) => PriceInfo.fromJson(e as Map<String, dynamic>)).toList();
+  }
+
   Future<TcgCard> getCard(String id) async {
     final cacheKey = '$_cacheVersion:card:$id';
     final cached = _cache.get(cacheKey);
@@ -98,4 +114,10 @@ final setsProvider = FutureProvider<List<SetInfo>>(
 
 final cardDetailProvider = FutureProvider.family<TcgCard, String>(
   (ref, id) => ref.watch(cardsRepositoryProvider).getCard(id),
+);
+
+final priceHistoryProvider =
+    FutureProvider.family<List<PriceInfo>, ({String cardId, int days})>(
+  (ref, args) =>
+      ref.watch(cardsRepositoryProvider).priceHistory(args.cardId, days: args.days),
 );
