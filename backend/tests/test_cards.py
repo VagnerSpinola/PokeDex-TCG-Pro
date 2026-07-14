@@ -30,6 +30,32 @@ async def test_list_cards_filter_by_rarity(client: AsyncClient, seed_cards):
     assert body["items"][0]["id"] == "sv1-198"
 
 
+async def test_list_cards_filter_by_multiple_sets(client: AsyncClient, seed_cards):
+    resp = await client.get(
+        "/cards", params=[("set_id", "sv1"), ("set_id", "swsh1")]
+    )
+    assert resp.json()["total"] == 3
+
+
+async def test_list_cards_filter_by_multiple_rarities(client: AsyncClient, seed_cards):
+    resp = await client.get(
+        "/cards", params=[("rarity", "Ultra Rare"), ("rarity", "Rare Holo V")]
+    )
+    body = resp.json()
+    assert body["total"] == 2
+    assert {c["id"] for c in body["items"]} == {"sv1-198", "swsh1-1"}
+
+
+async def test_list_cards_multi_filters_combine(client: AsyncClient, seed_cards):
+    resp = await client.get(
+        "/cards",
+        params=[("set_id", "sv1"), ("set_id", "swsh1"), ("rarity", "Common")],
+    )
+    body = resp.json()
+    assert body["total"] == 1
+    assert body["items"][0]["id"] == "sv1-25"
+
+
 async def test_list_cards_filter_by_type(client: AsyncClient, seed_cards):
     resp = await client.get("/cards", params={"type": "Grass"})
     body = resp.json()

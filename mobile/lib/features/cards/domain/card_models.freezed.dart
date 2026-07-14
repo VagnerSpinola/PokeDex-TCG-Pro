@@ -1217,7 +1217,8 @@ as int,
 /// @nodoc
 mixin _$CardFilters {
 
- String get query; String? get setId; String? get rarity; String? get supertype; String? get type;
+ String get query;// Multi-select: empty list = no filter.
+ List<String> get setIds; List<String> get rarities; String? get supertype; String? get type;
 /// Create a copy of CardFilters
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -1228,16 +1229,16 @@ $CardFiltersCopyWith<CardFilters> get copyWith => _$CardFiltersCopyWithImpl<Card
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CardFilters&&(identical(other.query, query) || other.query == query)&&(identical(other.setId, setId) || other.setId == setId)&&(identical(other.rarity, rarity) || other.rarity == rarity)&&(identical(other.supertype, supertype) || other.supertype == supertype)&&(identical(other.type, type) || other.type == type));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CardFilters&&(identical(other.query, query) || other.query == query)&&const DeepCollectionEquality().equals(other.setIds, setIds)&&const DeepCollectionEquality().equals(other.rarities, rarities)&&(identical(other.supertype, supertype) || other.supertype == supertype)&&(identical(other.type, type) || other.type == type));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,query,setId,rarity,supertype,type);
+int get hashCode => Object.hash(runtimeType,query,const DeepCollectionEquality().hash(setIds),const DeepCollectionEquality().hash(rarities),supertype,type);
 
 @override
 String toString() {
-  return 'CardFilters(query: $query, setId: $setId, rarity: $rarity, supertype: $supertype, type: $type)';
+  return 'CardFilters(query: $query, setIds: $setIds, rarities: $rarities, supertype: $supertype, type: $type)';
 }
 
 
@@ -1248,7 +1249,7 @@ abstract mixin class $CardFiltersCopyWith<$Res>  {
   factory $CardFiltersCopyWith(CardFilters value, $Res Function(CardFilters) _then) = _$CardFiltersCopyWithImpl;
 @useResult
 $Res call({
- String query, String? setId, String? rarity, String? supertype, String? type
+ String query, List<String> setIds, List<String> rarities, String? supertype, String? type
 });
 
 
@@ -1265,12 +1266,12 @@ class _$CardFiltersCopyWithImpl<$Res>
 
 /// Create a copy of CardFilters
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? query = null,Object? setId = freezed,Object? rarity = freezed,Object? supertype = freezed,Object? type = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? query = null,Object? setIds = null,Object? rarities = null,Object? supertype = freezed,Object? type = freezed,}) {
   return _then(_self.copyWith(
 query: null == query ? _self.query : query // ignore: cast_nullable_to_non_nullable
-as String,setId: freezed == setId ? _self.setId : setId // ignore: cast_nullable_to_non_nullable
-as String?,rarity: freezed == rarity ? _self.rarity : rarity // ignore: cast_nullable_to_non_nullable
-as String?,supertype: freezed == supertype ? _self.supertype : supertype // ignore: cast_nullable_to_non_nullable
+as String,setIds: null == setIds ? _self.setIds : setIds // ignore: cast_nullable_to_non_nullable
+as List<String>,rarities: null == rarities ? _self.rarities : rarities // ignore: cast_nullable_to_non_nullable
+as List<String>,supertype: freezed == supertype ? _self.supertype : supertype // ignore: cast_nullable_to_non_nullable
 as String?,type: freezed == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
@@ -1357,10 +1358,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String query,  String? setId,  String? rarity,  String? supertype,  String? type)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String query,  List<String> setIds,  List<String> rarities,  String? supertype,  String? type)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _CardFilters() when $default != null:
-return $default(_that.query,_that.setId,_that.rarity,_that.supertype,_that.type);case _:
+return $default(_that.query,_that.setIds,_that.rarities,_that.supertype,_that.type);case _:
   return orElse();
 
 }
@@ -1378,10 +1379,10 @@ return $default(_that.query,_that.setId,_that.rarity,_that.supertype,_that.type)
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String query,  String? setId,  String? rarity,  String? supertype,  String? type)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String query,  List<String> setIds,  List<String> rarities,  String? supertype,  String? type)  $default,) {final _that = this;
 switch (_that) {
 case _CardFilters():
-return $default(_that.query,_that.setId,_that.rarity,_that.supertype,_that.type);case _:
+return $default(_that.query,_that.setIds,_that.rarities,_that.supertype,_that.type);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -1398,10 +1399,10 @@ return $default(_that.query,_that.setId,_that.rarity,_that.supertype,_that.type)
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String query,  String? setId,  String? rarity,  String? supertype,  String? type)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String query,  List<String> setIds,  List<String> rarities,  String? supertype,  String? type)?  $default,) {final _that = this;
 switch (_that) {
 case _CardFilters() when $default != null:
-return $default(_that.query,_that.setId,_that.rarity,_that.supertype,_that.type);case _:
+return $default(_that.query,_that.setIds,_that.rarities,_that.supertype,_that.type);case _:
   return null;
 
 }
@@ -1412,13 +1413,27 @@ return $default(_that.query,_that.setId,_that.rarity,_that.supertype,_that.type)
 /// @nodoc
 
 
-class _CardFilters implements CardFilters {
-  const _CardFilters({this.query = '', this.setId, this.rarity, this.supertype, this.type});
+class _CardFilters extends CardFilters {
+  const _CardFilters({this.query = '', final  List<String> setIds = const [], final  List<String> rarities = const [], this.supertype, this.type}): _setIds = setIds,_rarities = rarities,super._();
   
 
 @override@JsonKey() final  String query;
-@override final  String? setId;
-@override final  String? rarity;
+// Multi-select: empty list = no filter.
+ final  List<String> _setIds;
+// Multi-select: empty list = no filter.
+@override@JsonKey() List<String> get setIds {
+  if (_setIds is EqualUnmodifiableListView) return _setIds;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_setIds);
+}
+
+ final  List<String> _rarities;
+@override@JsonKey() List<String> get rarities {
+  if (_rarities is EqualUnmodifiableListView) return _rarities;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_rarities);
+}
+
 @override final  String? supertype;
 @override final  String? type;
 
@@ -1432,16 +1447,16 @@ _$CardFiltersCopyWith<_CardFilters> get copyWith => __$CardFiltersCopyWithImpl<_
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CardFilters&&(identical(other.query, query) || other.query == query)&&(identical(other.setId, setId) || other.setId == setId)&&(identical(other.rarity, rarity) || other.rarity == rarity)&&(identical(other.supertype, supertype) || other.supertype == supertype)&&(identical(other.type, type) || other.type == type));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CardFilters&&(identical(other.query, query) || other.query == query)&&const DeepCollectionEquality().equals(other._setIds, _setIds)&&const DeepCollectionEquality().equals(other._rarities, _rarities)&&(identical(other.supertype, supertype) || other.supertype == supertype)&&(identical(other.type, type) || other.type == type));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,query,setId,rarity,supertype,type);
+int get hashCode => Object.hash(runtimeType,query,const DeepCollectionEquality().hash(_setIds),const DeepCollectionEquality().hash(_rarities),supertype,type);
 
 @override
 String toString() {
-  return 'CardFilters(query: $query, setId: $setId, rarity: $rarity, supertype: $supertype, type: $type)';
+  return 'CardFilters(query: $query, setIds: $setIds, rarities: $rarities, supertype: $supertype, type: $type)';
 }
 
 
@@ -1452,7 +1467,7 @@ abstract mixin class _$CardFiltersCopyWith<$Res> implements $CardFiltersCopyWith
   factory _$CardFiltersCopyWith(_CardFilters value, $Res Function(_CardFilters) _then) = __$CardFiltersCopyWithImpl;
 @override @useResult
 $Res call({
- String query, String? setId, String? rarity, String? supertype, String? type
+ String query, List<String> setIds, List<String> rarities, String? supertype, String? type
 });
 
 
@@ -1469,12 +1484,12 @@ class __$CardFiltersCopyWithImpl<$Res>
 
 /// Create a copy of CardFilters
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? query = null,Object? setId = freezed,Object? rarity = freezed,Object? supertype = freezed,Object? type = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? query = null,Object? setIds = null,Object? rarities = null,Object? supertype = freezed,Object? type = freezed,}) {
   return _then(_CardFilters(
 query: null == query ? _self.query : query // ignore: cast_nullable_to_non_nullable
-as String,setId: freezed == setId ? _self.setId : setId // ignore: cast_nullable_to_non_nullable
-as String?,rarity: freezed == rarity ? _self.rarity : rarity // ignore: cast_nullable_to_non_nullable
-as String?,supertype: freezed == supertype ? _self.supertype : supertype // ignore: cast_nullable_to_non_nullable
+as String,setIds: null == setIds ? _self._setIds : setIds // ignore: cast_nullable_to_non_nullable
+as List<String>,rarities: null == rarities ? _self._rarities : rarities // ignore: cast_nullable_to_non_nullable
+as List<String>,supertype: freezed == supertype ? _self.supertype : supertype // ignore: cast_nullable_to_non_nullable
 as String?,type: freezed == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
 as String?,
   ));

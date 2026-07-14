@@ -76,9 +76,18 @@ abstract class PaginatedCards with _$PaginatedCards {
 abstract class CardFilters with _$CardFilters {
   const factory CardFilters({
     @Default('') String query,
-    String? setId,
-    String? rarity,
+    // Multi-select: empty list = no filter.
+    @Default([]) List<String> setIds,
+    @Default([]) List<String> rarities,
     String? supertype,
     String? type,
   }) = _CardFilters;
+
+  const CardFilters._();
+
+  int get activeCount =>
+      (setIds.isEmpty ? 0 : 1) +
+      (rarities.isEmpty ? 0 : 1) +
+      (supertype == null ? 0 : 1) +
+      (type == null ? 0 : 1);
 }

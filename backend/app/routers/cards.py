@@ -15,8 +15,9 @@ async def list_cards(
     page: Annotated[int, Query(ge=1)] = 1,
     page_size: Annotated[int, Query(ge=1, le=100)] = 20,
     q: Annotated[str | None, Query(max_length=100)] = None,
-    set_id: str | None = None,
-    rarity: str | None = None,
+    # Repeatable: ?set_id=sv1&set_id=base1 filters across all selected sets.
+    set_id: Annotated[list[str] | None, Query(max_length=50)] = None,
+    rarity: Annotated[list[str] | None, Query(max_length=50)] = None,
     supertype: str | None = None,
     type: str | None = None,
 ) -> PaginatedCards:
@@ -25,8 +26,8 @@ async def list_cards(
         page=page,
         page_size=page_size,
         q=q,
-        set_id=set_id,
-        rarity=rarity,
+        set_ids=set_id,
+        rarities=rarity,
         supertype=supertype,
         card_type=type,
     )

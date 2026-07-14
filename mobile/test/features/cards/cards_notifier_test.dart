@@ -70,6 +70,26 @@ void main() {
     expect((captured.last as CardFilters).query, 'pika');
   });
 
+  test('setFilters forwards multi-select sets and rarities', () async {
+    when(() => repo.listCards(page: 1, filters: any(named: 'filters'))).thenAnswer(
+      (_) async => const PaginatedCards(items: [], page: 1, pageSize: 20, total: 0),
+    );
+
+    container.read(cardsNotifierProvider);
+    await settle();
+    await container.read(cardsNotifierProvider.notifier).setFilters(
+          const CardFilters(setIds: ['sv1', 'base1'], rarities: ['Rare', 'Ultra Rare']),
+        );
+
+    final captured = verify(
+      () => repo.listCards(page: 1, filters: captureAny(named: 'filters')),
+    ).captured;
+    final filters = captured.last as CardFilters;
+    expect(filters.setIds, ['sv1', 'base1']);
+    expect(filters.rarities, ['Rare', 'Ultra Rare']);
+    expect(filters.activeCount, 2);
+  });
+
   test('exposes error when repository fails', () async {
     when(() => repo.listCards(page: 1, filters: any(named: 'filters')))
         .thenThrow(Exception('boom'));

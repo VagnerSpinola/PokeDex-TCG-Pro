@@ -61,10 +61,7 @@ class _CardsScreenState extends ConsumerState<CardsScreen> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(cardsNotifierProvider);
-    final hasActiveFilters = state.filters.setId != null ||
-        state.filters.rarity != null ||
-        state.filters.supertype != null ||
-        state.filters.type != null;
+    final activeFilters = state.filters.activeCount;
 
     return Scaffold(
       appBar: AppBar(
@@ -75,7 +72,8 @@ class _CardsScreenState extends ConsumerState<CardsScreen> {
         actions: [
           IconButton(
             icon: Badge(
-              isLabelVisible: hasActiveFilters,
+              isLabelVisible: activeFilters > 0,
+              label: Text('$activeFilters'),
               child: const Icon(Icons.filter_list),
             ),
             onPressed: _openFilters,

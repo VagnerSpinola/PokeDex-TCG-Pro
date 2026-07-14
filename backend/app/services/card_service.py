@@ -10,17 +10,17 @@ def _apply_card_filters(
     stmt: Select,
     *,
     q: str | None,
-    set_id: str | None,
-    rarity: str | None,
+    set_ids: list[str] | None,
+    rarities: list[str] | None,
     supertype: str | None,
     card_type: str | None,
 ) -> Select:
     if q:
         stmt = stmt.where(Card.name.ilike(f"%{q}%"))
-    if set_id:
-        stmt = stmt.where(Card.set_id == set_id)
-    if rarity:
-        stmt = stmt.where(Card.rarity == rarity)
+    if set_ids:
+        stmt = stmt.where(Card.set_id.in_(set_ids))
+    if rarities:
+        stmt = stmt.where(Card.rarity.in_(rarities))
     if supertype:
         stmt = stmt.where(Card.supertype == supertype)
     if card_type:
@@ -35,12 +35,14 @@ async def list_cards(
     page: int,
     page_size: int,
     q: str | None = None,
-    set_id: str | None = None,
-    rarity: str | None = None,
+    set_ids: list[str] | None = None,
+    rarities: list[str] | None = None,
     supertype: str | None = None,
     card_type: str | None = None,
 ) -> tuple[list[Card], int]:
-    filters = dict(q=q, set_id=set_id, rarity=rarity, supertype=supertype, card_type=card_type)
+    filters = dict(
+        q=q, set_ids=set_ids, rarities=rarities, supertype=supertype, card_type=card_type
+    )
 
     count_stmt = _apply_card_filters(select(func.count(Card.id)), **filters)
     total = await db.scalar(count_stmt) or 0

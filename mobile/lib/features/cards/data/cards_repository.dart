@@ -48,8 +48,10 @@ class CardsRepository {
       'page': page,
       'page_size': 20,
       if (filters.query.isNotEmpty) 'q': filters.query,
-      if (filters.setId != null) 'set_id': filters.setId,
-      if (filters.rarity != null) 'rarity': filters.rarity,
+      // Lists serialize as repeated params (set_id=a&set_id=b) — Dio's
+      // default ListFormat.multi matches what FastAPI expects.
+      if (filters.setIds.isNotEmpty) 'set_id': filters.setIds,
+      if (filters.rarities.isNotEmpty) 'rarity': filters.rarities,
       if (filters.supertype != null) 'supertype': filters.supertype,
       if (filters.type != null) 'type': filters.type,
     };
