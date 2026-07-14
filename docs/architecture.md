@@ -99,8 +99,14 @@ while building phase 1 and anything the next session should know.
 - Upgrading to a trained model would need a labeled dataset of graded cards —
   future work; keep the disclaimer regardless.
 
-## Explicitly deferred (later phases)
+## Discarded
+
+- **Marketplace (former phase 5)** — dropped by owner decision on 2026-07-14.
+  Do not build or propose buy/sell/trade features. The payments/compliance
+  guardrail in AGENTS.md §2 stays in force should this ever be revisited.
+
+## Explicitly deferred
 
 On-device TFLite embedding extraction (phase 2 follow-up), scheduled/Celery
-jobs, price history charts in the app, AI grading (4), marketplace (5),
+jobs (daily price sync), price history charts in the app, re-enabling auth,
 Docker images for the apps, Terraform, CI/CD.

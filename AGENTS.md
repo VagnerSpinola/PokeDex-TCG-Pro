@@ -43,13 +43,13 @@ These override "just get it working" instincts:
 
 ## 3. Build phases — work within the current phase only
 
-| Phase | Scope |
-|---|---|
-| **1 (current default)** | Card database: browse/search/filter + manual collection manager (add/remove/track condition & quantity). No AI. |
-| 2 | Card scanner: OCR + embedding match, with manual correction fallback |
-| 3 | Price tracking: historical charts, daily sync job |
-| 4 | AI grading assistant (experimental, clearly labeled) |
-| 5 | Marketplace (buy/sell/trade) — last, due to compliance load |
+| Phase | Scope | Status |
+|---|---|---|
+| 1 | Card database: browse/search/filter + manual collection manager (add/remove/track condition & quantity). No AI. | Done |
+| 2 | Card scanner: OCR + embedding match, with manual correction fallback | Done |
+| 3 | Price tracking: historical charts, daily sync job | Done (daily scheduling deferred to infra) |
+| 4 | AI grading assistant (experimental, clearly labeled) | Done |
+| 5 | Marketplace (buy/sell/trade) | **DISCARDED** (owner decision, 2026-07-14) — do not build |
 
 If a task description sounds like it belongs to a later phase, say so and ask
 whether to proceed anyway rather than silently building it.
@@ -167,5 +167,8 @@ README.md
 
 ## 10. Current status
 
-Phase 1 in progress. Marketplace, AI grading, and full infra/deployment are
-explicitly out of scope until earlier phases are stable — see Section 3.
+Phases 1–4 delivered (see Section 3 and docs/architecture.md for decisions
+and deviations). The marketplace (former phase 5) is **discarded** — do not
+scaffold or propose it. Remaining known work: daily price-sync scheduling,
+on-device TFLite embedding extraction, infra/deployment (Docker images,
+Terraform, CI/CD), and re-enabling auth when accounts return.
