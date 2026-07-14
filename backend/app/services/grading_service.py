@@ -49,7 +49,12 @@ class GradeEstimate:
 
 def _decode(image_bytes: bytes) -> np.ndarray:
     raw = np.frombuffer(image_bytes, dtype=np.uint8)
-    img = cv2.imdecode(raw, cv2.IMREAD_COLOR)
+    # An empty/corrupt buffer makes imdecode raise cv2.error instead of
+    # returning None — treat both as an invalid image.
+    try:
+        img = cv2.imdecode(raw, cv2.IMREAD_COLOR)
+    except cv2.error:
+        img = None
     if img is None:
         raise ValueError("could not decode image")
     scale = 1200 / max(img.shape[:2])

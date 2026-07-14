@@ -9,11 +9,14 @@ from app.services.scan_service import RankedCandidate, rank_candidates
 class FakeScanner:
     """Stands in for the real embedder+FAISS+OCR bundle."""
 
-    def __init__(self, matches, ocr_text=""):
+    def __init__(self, matches, ocr_text="", raises=None):
         self.matches = matches
         self.ocr_text = ocr_text
+        self.raises = raises
 
     def match(self, image_bytes, k=5):
+        if self.raises is not None:
+            raise self.raises
         return self.matches, self.ocr_text
 
     def match_embedding(self, vector, k=5):
@@ -120,6 +123,16 @@ async def test_scan_by_embedding(client: AsyncClient, seed_cards):
     assert resp.status_code == 200
     body = resp.json()
     assert body["candidates"][0]["card"]["id"] == "swsh1-1"
+
+
+async def test_scan_invalid_image_422(client: AsyncClient, seed_cards):
+    from app.main import app
+
+    override_scanner(app, FakeScanner([], raises=ValueError("could not decode image")))
+    resp = await client.post(
+        "/scan", files={"file": ("bad.jpg", io.BytesIO(b""), "image/jpeg")}
+    )
+    assert resp.status_code == 422
 
 
 async def test_scan_503_when_index_missing(client: AsyncClient, monkeypatch):

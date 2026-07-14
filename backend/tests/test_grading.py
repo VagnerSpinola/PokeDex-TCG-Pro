@@ -108,3 +108,17 @@ async def test_grade_endpoint_invalid_file_422(client: AsyncClient):
         "/grade", files={"file": ("x.png", io.BytesIO(b"not-an-image"), "image/png")}
     )
     assert resp.status_code == 422
+
+
+async def test_grade_endpoint_empty_file_422(client: AsyncClient):
+    # An empty upload makes cv2.imdecode raise cv2.error, not return None —
+    # must still surface as a clean 422, never a 500.
+    resp = await client.post(
+        "/grade", files={"file": ("x.png", io.BytesIO(b""), "image/png")}
+    )
+    assert resp.status_code == 422
+
+
+def test_decode_empty_buffer_raises_valueerror():
+    with pytest.raises(ValueError):
+        grading_service._decode(b"")
