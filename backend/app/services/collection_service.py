@@ -1,7 +1,7 @@
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models import Card, CardCondition, CollectionItem, Set
+from app.models import Card, CardCondition, CollectionItem, Price, Set
 
 
 class CardNotFoundError(Exception):
@@ -129,8 +129,71 @@ async def get_stats(db: AsyncSession, user_id: int) -> dict:
             .order_by(func.sum(CollectionItem.quantity).desc())
         )
     ).all()
+    value_usd, value_eur = await _estimated_value(db, user_id)
     return {
         "total_cards": int(total_cards),
         "unique_cards": int(unique_cards),
         "sets": [{"set_id": s, "set_name": n, "count": int(c)} for s, n, c in per_set],
+        "value_usd": value_usd,
+        "value_eur": value_eur,
     }
+
+
+async def _estimated_value(
+    db: AsyncSession, user_id: int
+) -> tuple[float | None, float | None]:
+    """Conservative market value: latest snapshot per (card, source, variant),
+    cheapest variant per card (a collection row doesn't know its printing),
+    times owned quantity. USD = TCGplayer view, EUR = Cardmarket view."""
+    qty = dict(
+        (
+            await db.execute(
+                select(CollectionItem.card_id, func.sum(CollectionItem.quantity))
+                .where(CollectionItem.user_id == user_id)
+                .group_by(CollectionItem.card_id)
+            )
+        ).all()
+    )
+    if not qty:
+        return None, None
+
+    latest = (
+        select(
+            Price.card_id,
+            Price.source,
+            Price.variant,
+            func.max(Price.date).label("max_date"),
+        )
+        .where(Price.card_id.in_(qty))
+        .group_by(Price.card_id, Price.source, Price.variant)
+        .subquery()
+    )
+    rows = (
+        await db.execute(
+            select(Price.card_id, Price.source, Price.currency, Price.market, Price.mid).join(
+                latest,
+                (Price.card_id == latest.c.card_id)
+                & (Price.source == latest.c.source)
+                & (Price.variant == latest.c.variant)
+                & (Price.date == latest.c.max_date),
+            )
+        )
+    ).all()
+
+    best: dict[tuple[str, str], tuple[str, float]] = {}
+    for card_id, source, currency, market, mid in rows:
+        raw = market if market is not None else mid
+        if raw is None:
+            continue
+        value = float(raw)
+        key = (card_id, source)
+        if key not in best or value < best[key][1]:
+            best[key] = (currency, value)
+
+    totals: dict[str, float] = {}
+    for (card_id, _source), (currency, value) in best.items():
+        totals[currency] = totals.get(currency, 0.0) + value * int(qty[card_id])
+
+    usd = round(totals["USD"], 2) if "USD" in totals else None
+    eur = round(totals["EUR"], 2) if "EUR" in totals else None
+    return usd, eur

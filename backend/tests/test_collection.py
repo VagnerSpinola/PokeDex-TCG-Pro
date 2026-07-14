@@ -122,3 +122,40 @@ async def test_stats(client: AsyncClient, seed_cards, auth_headers):
     assert body["unique_cards"] == 3
     by_set = {s["set_id"]: s["count"] for s in body["sets"]}
     assert by_set == {"sv1": 3, "swsh1": 4}
+    assert body["value_usd"] is None  # no price data seeded
+    assert body["value_eur"] is None
+
+
+async def test_stats_estimated_value(client: AsyncClient, seed_cards, auth_headers, db):
+    from datetime import date, timedelta
+
+    from app.models import Price
+
+    today = date.today()
+    db.add_all([
+        # sv1-25: two variants today -> cheapest (2.00) wins; older snapshot ignored
+        Price(card_id="sv1-25", source="tcgplayer", variant="normal", date=today,
+              currency="USD", low=1, mid=3, high=5, market=2),
+        Price(card_id="sv1-25", source="tcgplayer", variant="holofoil", date=today,
+              currency="USD", low=8, mid=12, high=30, market=10),
+        Price(card_id="sv1-25", source="tcgplayer", variant="normal",
+              date=today - timedelta(days=5), currency="USD", low=1, mid=3, high=5, market=99),
+        # cardmarket EUR view; market missing -> falls back to mid
+        Price(card_id="sv1-25", source="cardmarket", variant="default", date=today,
+              currency="EUR", low=1, mid=1.5, high=None, market=None),
+        # swsh1-1 only on tcgplayer
+        Price(card_id="swsh1-1", source="tcgplayer", variant="holofoil", date=today,
+              currency="USD", low=3, mid=5, high=9, market=4),
+    ])
+    await db.commit()
+
+    await _add(client, auth_headers, card_id="sv1-25", quantity=2)
+    await _add(client, auth_headers, card_id="swsh1-1", quantity=3)
+    await _add(client, auth_headers, card_id="sv1-198", quantity=1)  # sem preço
+
+    resp = await client.get("/collection/stats", headers=auth_headers)
+    body = resp.json()
+    # USD: 2 x 2.00 (sv1-25 cheapest variant) + 3 x 4.00 (swsh1-1) = 16.00
+    assert body["value_usd"] == 16.0
+    # EUR: 2 x 1.50 (mid fallback) = 3.00
+    assert body["value_eur"] == 3.0

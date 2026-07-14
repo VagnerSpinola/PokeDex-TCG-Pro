@@ -580,7 +580,7 @@ as int,
 /// @nodoc
 mixin _$CollectionStats {
 
-@JsonKey(name: 'total_cards') int get totalCards;@JsonKey(name: 'unique_cards') int get uniqueCards; List<SetCount> get sets;
+@JsonKey(name: 'total_cards') int get totalCards;@JsonKey(name: 'unique_cards') int get uniqueCards; List<SetCount> get sets;@JsonKey(name: 'value_usd') double? get valueUsd;@JsonKey(name: 'value_eur') double? get valueEur;
 /// Create a copy of CollectionStats
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -593,16 +593,16 @@ $CollectionStatsCopyWith<CollectionStats> get copyWith => _$CollectionStatsCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CollectionStats&&(identical(other.totalCards, totalCards) || other.totalCards == totalCards)&&(identical(other.uniqueCards, uniqueCards) || other.uniqueCards == uniqueCards)&&const DeepCollectionEquality().equals(other.sets, sets));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CollectionStats&&(identical(other.totalCards, totalCards) || other.totalCards == totalCards)&&(identical(other.uniqueCards, uniqueCards) || other.uniqueCards == uniqueCards)&&const DeepCollectionEquality().equals(other.sets, sets)&&(identical(other.valueUsd, valueUsd) || other.valueUsd == valueUsd)&&(identical(other.valueEur, valueEur) || other.valueEur == valueEur));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,totalCards,uniqueCards,const DeepCollectionEquality().hash(sets));
+int get hashCode => Object.hash(runtimeType,totalCards,uniqueCards,const DeepCollectionEquality().hash(sets),valueUsd,valueEur);
 
 @override
 String toString() {
-  return 'CollectionStats(totalCards: $totalCards, uniqueCards: $uniqueCards, sets: $sets)';
+  return 'CollectionStats(totalCards: $totalCards, uniqueCards: $uniqueCards, sets: $sets, valueUsd: $valueUsd, valueEur: $valueEur)';
 }
 
 
@@ -613,7 +613,7 @@ abstract mixin class $CollectionStatsCopyWith<$Res>  {
   factory $CollectionStatsCopyWith(CollectionStats value, $Res Function(CollectionStats) _then) = _$CollectionStatsCopyWithImpl;
 @useResult
 $Res call({
-@JsonKey(name: 'total_cards') int totalCards,@JsonKey(name: 'unique_cards') int uniqueCards, List<SetCount> sets
+@JsonKey(name: 'total_cards') int totalCards,@JsonKey(name: 'unique_cards') int uniqueCards, List<SetCount> sets,@JsonKey(name: 'value_usd') double? valueUsd,@JsonKey(name: 'value_eur') double? valueEur
 });
 
 
@@ -630,12 +630,14 @@ class _$CollectionStatsCopyWithImpl<$Res>
 
 /// Create a copy of CollectionStats
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? totalCards = null,Object? uniqueCards = null,Object? sets = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? totalCards = null,Object? uniqueCards = null,Object? sets = null,Object? valueUsd = freezed,Object? valueEur = freezed,}) {
   return _then(_self.copyWith(
 totalCards: null == totalCards ? _self.totalCards : totalCards // ignore: cast_nullable_to_non_nullable
 as int,uniqueCards: null == uniqueCards ? _self.uniqueCards : uniqueCards // ignore: cast_nullable_to_non_nullable
 as int,sets: null == sets ? _self.sets : sets // ignore: cast_nullable_to_non_nullable
-as List<SetCount>,
+as List<SetCount>,valueUsd: freezed == valueUsd ? _self.valueUsd : valueUsd // ignore: cast_nullable_to_non_nullable
+as double?,valueEur: freezed == valueEur ? _self.valueEur : valueEur // ignore: cast_nullable_to_non_nullable
+as double?,
   ));
 }
 
@@ -720,10 +722,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: 'total_cards')  int totalCards, @JsonKey(name: 'unique_cards')  int uniqueCards,  List<SetCount> sets)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: 'total_cards')  int totalCards, @JsonKey(name: 'unique_cards')  int uniqueCards,  List<SetCount> sets, @JsonKey(name: 'value_usd')  double? valueUsd, @JsonKey(name: 'value_eur')  double? valueEur)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _CollectionStats() when $default != null:
-return $default(_that.totalCards,_that.uniqueCards,_that.sets);case _:
+return $default(_that.totalCards,_that.uniqueCards,_that.sets,_that.valueUsd,_that.valueEur);case _:
   return orElse();
 
 }
@@ -741,10 +743,10 @@ return $default(_that.totalCards,_that.uniqueCards,_that.sets);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'total_cards')  int totalCards, @JsonKey(name: 'unique_cards')  int uniqueCards,  List<SetCount> sets)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'total_cards')  int totalCards, @JsonKey(name: 'unique_cards')  int uniqueCards,  List<SetCount> sets, @JsonKey(name: 'value_usd')  double? valueUsd, @JsonKey(name: 'value_eur')  double? valueEur)  $default,) {final _that = this;
 switch (_that) {
 case _CollectionStats():
-return $default(_that.totalCards,_that.uniqueCards,_that.sets);case _:
+return $default(_that.totalCards,_that.uniqueCards,_that.sets,_that.valueUsd,_that.valueEur);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -761,10 +763,10 @@ return $default(_that.totalCards,_that.uniqueCards,_that.sets);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: 'total_cards')  int totalCards, @JsonKey(name: 'unique_cards')  int uniqueCards,  List<SetCount> sets)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: 'total_cards')  int totalCards, @JsonKey(name: 'unique_cards')  int uniqueCards,  List<SetCount> sets, @JsonKey(name: 'value_usd')  double? valueUsd, @JsonKey(name: 'value_eur')  double? valueEur)?  $default,) {final _that = this;
 switch (_that) {
 case _CollectionStats() when $default != null:
-return $default(_that.totalCards,_that.uniqueCards,_that.sets);case _:
+return $default(_that.totalCards,_that.uniqueCards,_that.sets,_that.valueUsd,_that.valueEur);case _:
   return null;
 
 }
@@ -776,7 +778,7 @@ return $default(_that.totalCards,_that.uniqueCards,_that.sets);case _:
 @JsonSerializable()
 
 class _CollectionStats implements CollectionStats {
-  const _CollectionStats({@JsonKey(name: 'total_cards') required this.totalCards, @JsonKey(name: 'unique_cards') required this.uniqueCards, required final  List<SetCount> sets}): _sets = sets;
+  const _CollectionStats({@JsonKey(name: 'total_cards') required this.totalCards, @JsonKey(name: 'unique_cards') required this.uniqueCards, required final  List<SetCount> sets, @JsonKey(name: 'value_usd') this.valueUsd, @JsonKey(name: 'value_eur') this.valueEur}): _sets = sets;
   factory _CollectionStats.fromJson(Map<String, dynamic> json) => _$CollectionStatsFromJson(json);
 
 @override@JsonKey(name: 'total_cards') final  int totalCards;
@@ -788,6 +790,8 @@ class _CollectionStats implements CollectionStats {
   return EqualUnmodifiableListView(_sets);
 }
 
+@override@JsonKey(name: 'value_usd') final  double? valueUsd;
+@override@JsonKey(name: 'value_eur') final  double? valueEur;
 
 /// Create a copy of CollectionStats
 /// with the given fields replaced by the non-null parameter values.
@@ -802,16 +806,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CollectionStats&&(identical(other.totalCards, totalCards) || other.totalCards == totalCards)&&(identical(other.uniqueCards, uniqueCards) || other.uniqueCards == uniqueCards)&&const DeepCollectionEquality().equals(other._sets, _sets));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CollectionStats&&(identical(other.totalCards, totalCards) || other.totalCards == totalCards)&&(identical(other.uniqueCards, uniqueCards) || other.uniqueCards == uniqueCards)&&const DeepCollectionEquality().equals(other._sets, _sets)&&(identical(other.valueUsd, valueUsd) || other.valueUsd == valueUsd)&&(identical(other.valueEur, valueEur) || other.valueEur == valueEur));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,totalCards,uniqueCards,const DeepCollectionEquality().hash(_sets));
+int get hashCode => Object.hash(runtimeType,totalCards,uniqueCards,const DeepCollectionEquality().hash(_sets),valueUsd,valueEur);
 
 @override
 String toString() {
-  return 'CollectionStats(totalCards: $totalCards, uniqueCards: $uniqueCards, sets: $sets)';
+  return 'CollectionStats(totalCards: $totalCards, uniqueCards: $uniqueCards, sets: $sets, valueUsd: $valueUsd, valueEur: $valueEur)';
 }
 
 
@@ -822,7 +826,7 @@ abstract mixin class _$CollectionStatsCopyWith<$Res> implements $CollectionStats
   factory _$CollectionStatsCopyWith(_CollectionStats value, $Res Function(_CollectionStats) _then) = __$CollectionStatsCopyWithImpl;
 @override @useResult
 $Res call({
-@JsonKey(name: 'total_cards') int totalCards,@JsonKey(name: 'unique_cards') int uniqueCards, List<SetCount> sets
+@JsonKey(name: 'total_cards') int totalCards,@JsonKey(name: 'unique_cards') int uniqueCards, List<SetCount> sets,@JsonKey(name: 'value_usd') double? valueUsd,@JsonKey(name: 'value_eur') double? valueEur
 });
 
 
@@ -839,12 +843,14 @@ class __$CollectionStatsCopyWithImpl<$Res>
 
 /// Create a copy of CollectionStats
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? totalCards = null,Object? uniqueCards = null,Object? sets = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? totalCards = null,Object? uniqueCards = null,Object? sets = null,Object? valueUsd = freezed,Object? valueEur = freezed,}) {
   return _then(_CollectionStats(
 totalCards: null == totalCards ? _self.totalCards : totalCards // ignore: cast_nullable_to_non_nullable
 as int,uniqueCards: null == uniqueCards ? _self.uniqueCards : uniqueCards // ignore: cast_nullable_to_non_nullable
 as int,sets: null == sets ? _self._sets : sets // ignore: cast_nullable_to_non_nullable
-as List<SetCount>,
+as List<SetCount>,valueUsd: freezed == valueUsd ? _self.valueUsd : valueUsd // ignore: cast_nullable_to_non_nullable
+as double?,valueEur: freezed == valueEur ? _self.valueEur : valueEur // ignore: cast_nullable_to_non_nullable
+as double?,
   ));
 }
 

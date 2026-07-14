@@ -45,3 +45,7 @@ class CollectionStats(BaseModel):
     total_cards: int
     unique_cards: int
     sets: list[SetCount]
+    # Conservative market estimates (cheapest variant, latest snapshot);
+    # None until the owned cards have price data.
+    value_usd: float | None = None
+    value_eur: float | None = None

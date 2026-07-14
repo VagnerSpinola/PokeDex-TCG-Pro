@@ -94,15 +94,42 @@ class _StatsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final hasValue = stats.valueUsd != null || stats.valueEur != null;
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+        child: Column(
           children: [
-            _Stat(label: 'Cartas', value: '${stats.totalCards}'),
-            _Stat(label: 'Únicas', value: '${stats.uniqueCards}'),
-            _Stat(label: 'Sets', value: '${stats.sets.length}'),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _Stat(label: 'Cartas', value: '${stats.totalCards}'),
+                _Stat(label: 'Únicas', value: '${stats.uniqueCards}'),
+                _Stat(label: 'Sets', value: '${stats.sets.length}'),
+              ],
+            ),
+            if (hasValue) ...[
+              const SizedBox(height: 14),
+              Text('Valor estimado da coleção', style: theme.textTheme.bodySmall),
+              const SizedBox(height: 2),
+              HoloText(
+                [
+                  if (stats.valueUsd != null)
+                    '\$${stats.valueUsd!.toStringAsFixed(2)}',
+                  if (stats.valueEur != null)
+                    '€${stats.valueEur!.toStringAsFixed(2)}',
+                ].join('  ·  '),
+                style: const TextStyle(fontSize: 26, fontWeight: FontWeight.w800),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                'preço de mercado (TCGplayer/Cardmarket) — estimativa, variante mais barata',
+                style: theme.textTheme.bodySmall
+                    ?.copyWith(color: theme.colorScheme.onSurfaceVariant, fontSize: 10),
+                textAlign: TextAlign.center,
+              ),
+            ],
           ],
         ),
       ),

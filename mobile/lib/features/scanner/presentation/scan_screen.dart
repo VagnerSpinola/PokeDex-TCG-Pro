@@ -8,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../cards/presentation/cards_notifier.dart';
+import '../../collection/presentation/add_to_collection_sheet.dart';
 import '../data/scan_repository.dart';
 import '../domain/scan_models.dart';
 
@@ -185,11 +186,21 @@ class _CandidateTile extends StatelessWidget {
             : const Icon(Icons.style),
         title: Text(card.name),
         subtitle: Text(
-          '${card.setId} · ${card.rarity ?? ''} · similaridade ${(candidate.score * 100).toStringAsFixed(0)}%',
+          '${card.setId} · ${card.rarity ?? ''} · similaridade '
+          '${(candidate.score * 100).toStringAsFixed(0)}% · '
+          '${_labels[candidate.confidence] ?? candidate.confidence}',
         ),
-        trailing: Chip(
-          label: Text('Confiança: ${_labels[candidate.confidence] ?? candidate.confidence}'),
-          backgroundColor: _badgeColor(context),
+        trailing: IconButton(
+          icon: const Icon(Icons.add_circle_outline, size: 28),
+          tooltip: 'Adicionar à coleção',
+          color: _badgeColor(context) == Theme.of(context).colorScheme.errorContainer
+              ? Theme.of(context).colorScheme.error
+              : null,
+          onPressed: () => showModalBottomSheet(
+            context: context,
+            isScrollControlled: true,
+            builder: (_) => AddToCollectionSheet(card: card),
+          ),
         ),
         onTap: () => context.push('/cards/${card.id}'),
       ),

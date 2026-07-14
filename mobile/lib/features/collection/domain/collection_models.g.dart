@@ -45,6 +45,8 @@ _CollectionStats _$CollectionStatsFromJson(Map<String, dynamic> json) =>
       sets: (json['sets'] as List<dynamic>)
           .map((e) => SetCount.fromJson(e as Map<String, dynamic>))
           .toList(),
+      valueUsd: (json['value_usd'] as num?)?.toDouble(),
+      valueEur: (json['value_eur'] as num?)?.toDouble(),
     );
 
 Map<String, dynamic> _$CollectionStatsToJson(_CollectionStats instance) =>
@@ -52,4 +54,6 @@ Map<String, dynamic> _$CollectionStatsToJson(_CollectionStats instance) =>
       'total_cards': instance.totalCards,
       'unique_cards': instance.uniqueCards,
       'sets': instance.sets,
+      'value_usd': instance.valueUsd,
+      'value_eur': instance.valueEur,
     };

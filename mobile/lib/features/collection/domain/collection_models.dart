@@ -36,6 +36,8 @@ abstract class CollectionStats with _$CollectionStats {
     @JsonKey(name: 'total_cards') required int totalCards,
     @JsonKey(name: 'unique_cards') required int uniqueCards,
     required List<SetCount> sets,
+    @JsonKey(name: 'value_usd') double? valueUsd,
+    @JsonKey(name: 'value_eur') double? valueEur,
   }) = _CollectionStats;
 
   factory CollectionStats.fromJson(Map<String, dynamic> json) =>
