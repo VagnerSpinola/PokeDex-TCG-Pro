@@ -108,6 +108,21 @@ while building phase 1 and anything the next session should know.
   disclaimer (AGENTS.md §2). A trained model on labeled graded cards remains
   the future upgrade path; the report schema is ready for it.
 
+### ML grade model — evaluated and NOT integrated (2026-07-14)
+
+Trained locally on the public samsilverman/PSA-Baseball-Grades dataset
+(11.5k images, PSA 1-10, 150x200px, no declared license — local evaluation
+only, never redistributed): MobileNetV2 embeddings -> HistGradientBoosting.
+Held-out results: MAE 1.60 grades, only 40% within ±1, heavy regression to
+the mean (true PSA 1 predicted ~3.5, true PSA 10 predicted ~7.7). Fails
+precisely at the 8/9/10 boundary that matters. Root causes: 150x200px kills
+corner/surface detail, baseball slabs ≠ raw Pokémon photos, generic
+ImageNet embeddings. Decision: keep the rulebook pipeline as the grader.
+Viable future paths: (1) first-party dataset — app feature where users
+photograph their own already-graded slabs (trusted label + hi-res + consent);
+(2) PSA public API images (post-2021 certs) collected within its terms;
+(3) condition-specific embedder fine-tuning once data exists.
+
 ## Discarded
 
 - **Marketplace (former phase 5)** — dropped by owner decision on 2026-07-14.
