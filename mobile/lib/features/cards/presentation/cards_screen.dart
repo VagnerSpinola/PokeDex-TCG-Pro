@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/theme.dart';
+import '../../../core/widgets/holo.dart';
 import '../domain/card_models.dart';
 import 'cards_notifier.dart';
 import 'filter_sheet.dart';
@@ -66,7 +68,10 @@ class _CardsScreenState extends ConsumerState<CardsScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Cartas'),
+        title: const HoloText(
+          'PokeDex',
+          style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800, letterSpacing: -0.3),
+        ),
         actions: [
           IconButton(
             icon: Badge(
@@ -156,25 +161,28 @@ class _CardTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final image = card.imageSmallUrl != null
+        ? CachedNetworkImage(
+            imageUrl: card.imageSmallUrl!,
+            fit: BoxFit.contain,
+            placeholder: (_, _) =>
+                const Center(child: CircularProgressIndicator(strokeWidth: 2)),
+            errorWidget: (_, _, _) => const Icon(Icons.image_not_supported),
+          )
+        : const ColoredBox(
+            color: Color(0x22000000),
+            child: Icon(Icons.image_not_supported),
+          );
+
     return InkWell(
       onTap: () => context.push('/cards/${card.id}'),
-      borderRadius: BorderRadius.circular(8),
+      borderRadius: BorderRadius.circular(10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Expanded(
-            child: card.imageSmallUrl != null
-                ? CachedNetworkImage(
-                    imageUrl: card.imageSmallUrl!,
-                    fit: BoxFit.contain,
-                    placeholder: (_, _) =>
-                        const Center(child: CircularProgressIndicator(strokeWidth: 2)),
-                    errorWidget: (_, _, _) => const Icon(Icons.image_not_supported),
-                  )
-                : const ColoredBox(
-                    color: Color(0x11000000),
-                    child: Icon(Icons.image_not_supported),
-                  ),
+            // Rare cards get the signature holo frame in the grid.
+            child: HoloFrame(enabled: isHoloRarity(card.rarity), child: image),
           ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 4),

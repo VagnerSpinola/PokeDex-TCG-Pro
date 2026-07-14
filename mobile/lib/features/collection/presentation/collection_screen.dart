@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/widgets/holo.dart';
 import '../data/collection_repository.dart';
 import '../domain/collection_models.dart';
 import 'collection_notifier.dart';
@@ -119,7 +120,7 @@ class _Stat extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text(value, style: Theme.of(context).textTheme.headlineSmall),
+        HoloText(value, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w800)),
         Text(label, style: Theme.of(context).textTheme.bodySmall),
       ],
     );

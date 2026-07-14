@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/theme.dart';
+import '../../../core/widgets/holo.dart';
 import '../../collection/presentation/add_to_collection_sheet.dart';
 import '../data/cards_repository.dart';
 import '../domain/card_models.dart';
@@ -44,14 +46,14 @@ class CardDetailScreen extends ConsumerWidget {
       ),
       floatingActionButton: card.value == null
           ? null
-          : FloatingActionButton.extended(
+          : HoloButton(
               onPressed: () => showModalBottomSheet(
                 context: context,
                 isScrollControlled: true,
                 builder: (_) => AddToCollectionSheet(card: card.value!),
               ),
-              icon: const Icon(Icons.add),
-              label: const Text('Adicionar à coleção'),
+              icon: Icons.add,
+              label: 'Adicionar à coleção',
             ),
     );
   }
@@ -72,18 +74,28 @@ class _CardDetail extends StatelessWidget {
           Center(
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxHeight: 420),
-              child: CachedNetworkImage(
-                imageUrl: image,
-                placeholder: (_, _) => const SizedBox(
-                  height: 420,
-                  child: Center(child: CircularProgressIndicator()),
+              // The "opening a booster" moment: rare cards shimmer.
+              child: HoloShimmer(
+                enabled: isHoloRarity(card.rarity),
+                child: CachedNetworkImage(
+                  imageUrl: image,
+                  placeholder: (_, _) => const SizedBox(
+                    height: 420,
+                    child: Center(child: CircularProgressIndicator()),
+                  ),
+                  errorWidget: (_, _, _) => const Icon(Icons.image_not_supported, size: 64),
                 ),
-                errorWidget: (_, _, _) => const Icon(Icons.image_not_supported, size: 64),
               ),
             ),
           ),
         const SizedBox(height: 16),
-        Text(card.name, style: Theme.of(context).textTheme.headlineSmall),
+        Text(
+          card.name,
+          style: Theme.of(context)
+              .textTheme
+              .headlineSmall
+              ?.copyWith(fontWeight: FontWeight.w800, letterSpacing: -0.3),
+        ),
         const SizedBox(height: 8),
         Wrap(
           spacing: 8,
@@ -91,9 +103,16 @@ class _CardDetail extends StatelessWidget {
           children: [
             if (card.set != null) Chip(label: Text(card.set!.name)),
             if (card.number != null) Chip(label: Text('#${card.number}')),
-            if (card.rarity != null) Chip(label: Text(card.rarity!)),
+            if (card.rarity != null)
+              isHoloRarity(card.rarity)
+                  ? Chip(
+                      label: HoloText(card.rarity!,
+                          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700)),
+                    )
+                  : Chip(label: Text(card.rarity!)),
             if (card.supertype != null) Chip(label: Text(card.supertype!)),
-            for (final t in card.types ?? const <String>[]) Chip(label: Text(t)),
+            // Energy types carry their game color — information, not decor.
+            for (final t in card.types ?? const <String>[]) _EnergyChip(type: t),
             if (card.hp != null) Chip(label: Text('HP ${card.hp}')),
           ],
         ),
@@ -162,10 +181,9 @@ class _PricesSection extends StatelessWidget {
                       style: theme.textTheme.bodyMedium,
                     ),
                   ),
-                  Text(
+                  HoloText(
                     _money(p.currency, p.market ?? p.mid),
-                    style: theme.textTheme.titleMedium
-                        ?.copyWith(fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w800),
                   ),
                 ],
               ),
@@ -183,11 +201,35 @@ class _PricesSection extends StatelessWidget {
               'Fonte: TCGplayer/Cardmarket via Pokémon TCG API — valores de referência, '
               'não são cotação oficial.',
               style: theme.textTheme.bodySmall
-                  ?.copyWith(color: theme.colorScheme.outline),
+                  ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
             ),
           ],
         ),
       ),
+    );
+  }
+}
+
+class _EnergyChip extends StatelessWidget {
+  const _EnergyChip({required this.type});
+
+  final String type;
+
+  @override
+  Widget build(BuildContext context) {
+    final color = energyColors[type];
+    if (color == null) return Chip(label: Text(type));
+    return Chip(
+      label: Text(
+        type,
+        style: const TextStyle(
+          color: Color(0xFF17171F),
+          fontWeight: FontWeight.w800,
+          fontSize: 12,
+        ),
+      ),
+      backgroundColor: color,
+      side: BorderSide.none,
     );
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/theme.dart';
 import '../data/cards_repository.dart';
 import '../domain/card_models.dart';
 
@@ -87,15 +88,34 @@ class _FilterSheetState extends ConsumerState<FilterSheet> {
             ],
             onChanged: (v) => setState(() => _supertype = v),
           ),
-          const SizedBox(height: 12),
-          DropdownButtonFormField<String?>(
-            initialValue: _type,
-            decoration: const InputDecoration(labelText: 'Tipo de energia'),
-            items: [
-              const DropdownMenuItem(value: null, child: Text('Todos')),
-              for (final t in _types) DropdownMenuItem(value: t, child: Text(t)),
+          const SizedBox(height: 16),
+          Text('Tipo de energia', style: Theme.of(context).textTheme.labelLarge),
+          const SizedBox(height: 8),
+          // Energy filters as tappable "energy cards" — each type wears its
+          // game color (Energia Viva signature).
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              for (final t in _types)
+                ChoiceChip(
+                  label: Text(t),
+                  selected: _type == t,
+                  onSelected: (on) => setState(() => _type = on ? t : null),
+                  selectedColor: energyColors[t],
+                  labelStyle: TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 12,
+                    color: _type == t ? const Color(0xFF17171F) : null,
+                  ),
+                  showCheckmark: false,
+                  side: _type == t
+                      ? BorderSide.none
+                      : BorderSide(
+                          color: (energyColors[t] ?? Colors.white).withValues(alpha: 0.55),
+                        ),
+                ),
             ],
-            onChanged: (v) => setState(() => _type = v),
           ),
           const SizedBox(height: 20),
           Row(
