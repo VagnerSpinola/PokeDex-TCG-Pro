@@ -87,17 +87,26 @@ while building phase 1 and anything the next session should know.
   uploads the photo and the server embeds it with the same model.
 - OCR engine: RapidOCR (onnxruntime) — pip-only, no system Tesseract needed.
 
-## Phase 4 — AI grading assistant (built 2026-07-13, user request)
+## Phase 4 — AI grading assistant (v2 PSA-rulebook, 2026-07-14)
 
-- **Heuristic OpenCV pipeline, not a trained model**: card contour detection →
-  perspective warp → sub-scores for centering (border-width symmetry),
-  corners/edges (whitening), surface (glare/blur, lowest confidence). Overall
-  is a weighted average capped near the worst criterion (conservative).
-- `POST /grade` — every response carries `experimental: true` and the
-  mandatory "estimate only, not an official grade" disclaimer (AGENTS.md §2);
-  the app renders an EXPERIMENTAL badge and the disclaimer prominently.
-- Upgrading to a trained model would need a labeled dataset of graded cards —
-  future work; keep the disclaimer regardless.
+- **CV pipeline structured after PSA's PUBLISHED standards, not a trained
+  model**: centering caps per grade (55/45→10 ... 90/10→3, worst axis is the
+  ceiling; back one band looser), per-corner/per-edge whitening forensics
+  (worst-dominates weighting), surface (adaptive scratch detection normalized
+  to the card's own texture so holofoil isn't punished; crease evidence via
+  long diagonal Hough ridges — tuned to under-report; print-line heuristic
+  ignores the card's own frame structure). FINAL grade = lowest sub-grade
+  (PSA rule); crease caps at 6 (light) / 3 (severe); print line caps 9.
+- **Output is a RANGE** (±0.5 good photo, ±1.5 poor photo), never a point.
+  Photo quality gates (sharpness ≥80 Laplacian, glare ≤6%, card ≥600px)
+  return actionable retake instructions (45°/45° diffuse light, 5000-6500K).
+- `POST /grade` accepts front + optional back photo; `POST /grade/video`
+  (720p+, 2s+) samples frames, keeps the sharpest with a detected card and
+  takes the median consensus — defects persisting across angles count,
+  moving glare doesn't.
+- Every response still carries `experimental: true` + the mandatory
+  disclaimer (AGENTS.md §2). A trained model on labeled graded cards remains
+  the future upgrade path; the report schema is ready for it.
 
 ## Discarded
 
