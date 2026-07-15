@@ -56,6 +56,57 @@ async def test_list_cards_multi_filters_combine(client: AsyncClient, seed_cards)
     assert body["items"][0]["id"] == "sv1-25"
 
 
+async def test_list_cards_search_name_plus_set(client: AsyncClient, seed_cards):
+    # "pika scarlet" — one token hits the card name, the other the set name.
+    resp = await client.get("/cards", params={"q": "pika scarlet"})
+    body = resp.json()
+    assert body["total"] == 1
+    assert body["items"][0]["id"] == "sv1-25"
+
+    # Same card-name token with the wrong set matches nothing.
+    resp = await client.get("/cards", params={"q": "pika sword"})
+    assert resp.json()["total"] == 0
+
+
+async def test_list_cards_search_set_only_token(client: AsyncClient, seed_cards):
+    resp = await client.get("/cards", params={"q": "sword"})
+    body = resp.json()
+    assert body["total"] == 1
+    assert body["items"][0]["id"] == "swsh1-1"
+
+
+async def test_list_cards_sort_by_name(client: AsyncClient, seed_cards):
+    resp = await client.get("/cards", params={"sort": "name"})
+    names = [c["name"] for c in resp.json()["items"]]
+    assert names == ["Celebi V", "Miraidon ex", "Pikachu"]
+
+    resp = await client.get("/cards", params={"sort": "-name"})
+    names = [c["name"] for c in resp.json()["items"]]
+    assert names == ["Pikachu", "Miraidon ex", "Celebi V"]
+
+
+async def test_list_cards_sort_by_number_numeric(client: AsyncClient, seed_cards):
+    # Numeric-aware: 1 < 25 < 198 (string sort would give "1" < "198" < "25").
+    resp = await client.get("/cards", params={"sort": "number"})
+    numbers = [c["number"] for c in resp.json()["items"]]
+    assert numbers == ["1", "25", "198"]
+
+
+async def test_list_cards_sort_by_price_desc_nulls_last(client: AsyncClient, seed_cards, db):
+    await _seed_prices(db)
+
+    resp = await client.get("/cards", params={"sort": "-price"})
+    ids = [c["id"] for c in resp.json()["items"]]
+    # Only sv1-25 has prices (best USD market today = 9.0); unpriced cards trail.
+    assert ids[0] == "sv1-25"
+    assert set(ids[1:]) == {"sv1-198", "swsh1-1"}
+
+
+async def test_list_cards_sort_rejects_unknown(client: AsyncClient, seed_cards):
+    resp = await client.get("/cards", params={"sort": "hp"})
+    assert resp.status_code == 422
+
+
 async def test_list_cards_filter_by_type(client: AsyncClient, seed_cards):
     resp = await client.get("/cards", params={"type": "Grass"})
     body = resp.json()

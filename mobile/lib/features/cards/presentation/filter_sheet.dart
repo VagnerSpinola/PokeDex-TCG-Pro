@@ -183,9 +183,10 @@ class _FilterSheetState extends ConsumerState<FilterSheet> {
             children: [
               Expanded(
                 child: OutlinedButton(
+                  // Limpar zera filtros, mas mantém busca e ordenação.
                   onPressed: () => Navigator.pop(
                     context,
-                    CardFilters(query: widget.initial.query),
+                    CardFilters(query: widget.initial.query, sort: widget.initial.sort),
                   ),
                   child: const Text('Limpar'),
                 ),
@@ -201,6 +202,7 @@ class _FilterSheetState extends ConsumerState<FilterSheet> {
                       rarities: _rarities.toList(),
                       supertype: _supertype,
                       type: _type,
+                      sort: widget.initial.sort,
                     ),
                   ),
                   child: const Text('Aplicar'),

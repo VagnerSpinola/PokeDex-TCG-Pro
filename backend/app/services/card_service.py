@@ -1,7 +1,8 @@
 from datetime import date, timedelta
 
-from sqlalchemy import Select, Text, func, select
+from sqlalchemy import Integer, Select, Text, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import aliased
 
 from app.models import Card, Price, Set
 
@@ -16,7 +17,17 @@ def _apply_card_filters(
     card_type: str | None,
 ) -> Select:
     if q:
-        stmt = stmt.where(Card.name.ilike(f"%{q}%"))
+        # Every token must match somewhere: card name, set name, or the card
+        # number — so "charizard base" finds Charizard in Base Set.
+        stmt = stmt.join(Set, Card.set_id == Set.id)
+        for token in q.split():
+            stmt = stmt.where(
+                or_(
+                    Card.name.ilike(f"%{token}%"),
+                    Set.name.ilike(f"%{token}%"),
+                    Card.number.ilike(token),
+                )
+            )
     if set_ids:
         stmt = stmt.where(Card.set_id.in_(set_ids))
     if rarities:
@@ -29,6 +40,45 @@ def _apply_card_filters(
     return stmt
 
 
+# Card.number is text ("25", "TG12", "177a"); extract the digits so 2 < 10.
+_number_numeric = func.nullif(func.regexp_replace(Card.number, r"\D", "", "g"), "").cast(Integer)
+
+
+def _latest_usd_market():
+    """Correlated subquery: highest USD market at the card's newest snapshot."""
+    latest = aliased(Price)
+    latest_date = (
+        select(func.max(latest.date))
+        .where(latest.card_id == Card.id, latest.currency == "USD")
+        .correlate(Card)
+        .scalar_subquery()
+    )
+    return (
+        select(func.max(Price.market))
+        .where(Price.card_id == Card.id, Price.currency == "USD", Price.date == latest_date)
+        .correlate(Card)
+        .scalar_subquery()
+    )
+
+
+def _order_clause(sort: str | None) -> tuple:
+    match sort:
+        case "name":
+            return (Card.name.asc(), Card.id)
+        case "-name":
+            return (Card.name.desc(), Card.id)
+        case "number":
+            return (_number_numeric.asc().nulls_last(), Card.number, Card.id)
+        case "-number":
+            return (_number_numeric.desc().nulls_last(), Card.number, Card.id)
+        case "price":
+            return (_latest_usd_market().asc().nulls_last(), Card.id)
+        case "-price":
+            return (_latest_usd_market().desc().nulls_last(), Card.id)
+        case _:
+            return (Card.set_id, _number_numeric, Card.number)
+
+
 async def list_cards(
     db: AsyncSession,
     *,
@@ -39,6 +89,7 @@ async def list_cards(
     rarities: list[str] | None = None,
     supertype: str | None = None,
     card_type: str | None = None,
+    sort: str | None = None,
 ) -> tuple[list[Card], int]:
     filters = dict(
         q=q, set_ids=set_ids, rarities=rarities, supertype=supertype, card_type=card_type
@@ -49,7 +100,7 @@ async def list_cards(
 
     stmt = (
         _apply_card_filters(select(Card), **filters)
-        .order_by(Card.set_id, Card.number)
+        .order_by(*_order_clause(sort))
         .offset((page - 1) * page_size)
         .limit(page_size)
     )

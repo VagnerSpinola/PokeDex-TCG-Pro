@@ -70,6 +70,26 @@ class _CardsScreenState extends ConsumerState<CardsScreen> {
           style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800, letterSpacing: -0.3),
         ),
         actions: [
+          PopupMenuButton<String>(
+            icon: Icon(
+              Icons.sort,
+              color: state.filters.sort != null ? holoCyan : null,
+            ),
+            tooltip: 'Ordenar',
+            initialValue: state.filters.sort ?? '',
+            onSelected: (v) => ref
+                .read(cardsNotifierProvider.notifier)
+                .setSort(v.isEmpty ? null : v),
+            itemBuilder: (_) => const [
+              PopupMenuItem(value: '', child: Text('Padrão (set / número)')),
+              PopupMenuItem(value: 'name', child: Text('Nome A–Z')),
+              PopupMenuItem(value: '-name', child: Text('Nome Z–A')),
+              PopupMenuItem(value: 'number', child: Text('Menor número')),
+              PopupMenuItem(value: '-number', child: Text('Maior número')),
+              PopupMenuItem(value: '-price', child: Text('Maior preço')),
+              PopupMenuItem(value: 'price', child: Text('Menor preço')),
+            ],
+          ),
           IconButton(
             icon: Badge(
               isLabelVisible: activeFilters > 0,
@@ -101,7 +121,7 @@ class _CardsScreenState extends ConsumerState<CardsScreen> {
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
             child: TextField(
               decoration: const InputDecoration(
-                hintText: 'Buscar por nome...',
+                hintText: 'Buscar: nome, set ou ambos ("charizard base")',
                 prefixIcon: Icon(Icons.search),
                 isDense: true,
               ),

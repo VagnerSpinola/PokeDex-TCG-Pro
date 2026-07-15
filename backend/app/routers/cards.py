@@ -20,6 +20,7 @@ async def list_cards(
     rarity: Annotated[list[str] | None, Query(max_length=50)] = None,
     supertype: str | None = None,
     type: str | None = None,
+    sort: Annotated[str | None, Query(pattern=r"^-?(name|number|price)$")] = None,
 ) -> PaginatedCards:
     cards, total = await card_service.list_cards(
         db,
@@ -30,6 +31,7 @@ async def list_cards(
         rarities=rarity,
         supertype=supertype,
         card_type=type,
+        sort=sort,
     )
     return PaginatedCards(items=cards, page=page, page_size=page_size, total=total)
 

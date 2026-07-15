@@ -81,6 +81,9 @@ abstract class CardFilters with _$CardFilters {
     @Default([]) List<String> rarities,
     String? supertype,
     String? type,
+    // API sort key (name, -name, number, -number, price, -price);
+    // null = ordem padrão do catálogo (set + número). Não conta como filtro.
+    String? sort,
   }) = _CardFilters;
 
   const CardFilters._();

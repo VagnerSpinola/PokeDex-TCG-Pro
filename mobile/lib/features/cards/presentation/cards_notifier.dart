@@ -86,6 +86,12 @@ class CardsNotifier extends Notifier<CardsState> {
     state = state.copyWith(filters: filters);
     await loadFirstPage();
   }
+
+  Future<void> setSort(String? sort) async {
+    if (sort == state.filters.sort) return;
+    state = state.copyWith(filters: state.filters.copyWith(sort: sort));
+    await loadFirstPage();
+  }
 }
 
 final cardsNotifierProvider = NotifierProvider<CardsNotifier, CardsState>(CardsNotifier.new);

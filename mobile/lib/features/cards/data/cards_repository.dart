@@ -54,6 +54,7 @@ class CardsRepository {
       if (filters.rarities.isNotEmpty) 'rarity': filters.rarities,
       if (filters.supertype != null) 'supertype': filters.supertype,
       if (filters.type != null) 'type': filters.type,
+      if (filters.sort != null) 'sort': filters.sort,
     };
     final cacheKey = '$_cacheVersion:cards:${jsonEncode(params)}';
     final cached = _cache.get(cacheKey);
